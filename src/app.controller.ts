@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Res, Headers } from '@nestjs/common';
 import * as path from 'path';
 import { Response } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
@@ -41,9 +41,13 @@ export class AppController {
   }
 
   @Post(':id')
-  async postMarker(@Param('id') id: string, @Query() query: any) {
+  async postMarker(@Param('id') id: string, @Query() query: any, @Headers('authorization') auth: string, @Res() res: Response) {
+    const map = await this.mapModel.findOne({ id });
+    if (!map || !auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
+      return res.status(401).json({ message: 'Invalid API key'});
+    }
     this.createMarker(id, query.latitude, query.longitude);
-    return { message: 'Marker created' };
+    return res.status(201).json({ message: 'Marker created' });
   }
 
   private createMarker(id: string, latitude: string, longitude: string) {
