@@ -1,1 +1,0 @@
-export const numberPrompt = 'Deduce un numero del mensaje del usuario. Debes de responder solo con el numero en cifra, si no puedes deducir un numero de mi mensaje responde con "false". Si hay mas de un numero deducible de mi mensaje, responderas con el mayor de entre ellos.';
