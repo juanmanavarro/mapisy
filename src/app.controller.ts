@@ -50,4 +50,14 @@ export class AppController {
 
     return this.markerModel.create({ map_id: id, latitude, longitude });
   }
+
+  @Get(':id/config')
+  async configMap(@Param('id') id: string, @Res() res: Response) {
+    let map = await this.mapModel.findOne({ id });
+    if (!map) {
+      return res.status(404).sendFile(path.join(__dirname, '..', 'public', '404.html'));
+    }
+
+      return res.sendFile(path.join(__dirname, '..', 'public', 'config.html'));
+    }
 }
