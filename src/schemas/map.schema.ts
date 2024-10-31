@@ -12,7 +12,7 @@ export type MapDocument = Map & Document;
   },
 })
 export class Map {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   id: string;
 
   @Prop({ default: 0 })
@@ -24,6 +24,9 @@ export class Map {
   @Prop({ default: 1 })
   zoom: number;
 
+  @Prop()
+  api_key: string;
+
   markers: Marker[];
 }
 
@@ -33,4 +36,11 @@ MapSchema.virtual('markers', {
   ref: Marker.name,
   localField: 'id',
   foreignField: 'map_id',
+});
+
+MapSchema.pre('save', function(next) {
+  if (this.isNew) {
+    this.api_key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
+  next();
 });
