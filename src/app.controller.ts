@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Res } from '@nestjs/common';
 import * as path from 'path';
 import { Response } from 'express';
 
@@ -12,14 +12,20 @@ export class AppController {
   @Get(':id')
   async getMap(@Param('id') id: string, @Res() res: Response, @Query() query: any) {
     if (query.latitude && query.longitude) {
-      return this.createMarker(query.latitude, query.longitude, res);
+      this.createMarker(id, query.latitude, query.longitude);
+      return res.status(201).json({ message: 'Marker created' });
     }
 
     return res.sendFile(path.join(__dirname, '..', 'public', 'map.html'));
   }
 
-  private createMarker(latitude: string, longitude: string, @Res() res: Response) {
+  @Post(':id')
+  async postMarker(@Param('id') id: string, @Query() query: any) {
+    this.createMarker(id, query.latitude, query.longitude);
+    return { message: 'Marker created' };
+  }
+
+  private createMarker(id: string, latitude: string, longitude: string) {
     // TODO: Create marker
-    return res.status(201).json({ message: 'Marker created' });
   }
 }
