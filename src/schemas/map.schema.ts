@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Marker } from './marker.schema';
 
 export type MapDocument = Map & Document;
 
@@ -10,6 +11,14 @@ export type MapDocument = Map & Document;
 export class Map {
   @Prop({ required: true })
   id: string;
+
+  markers: Marker[];
 }
 
 export const MapSchema = SchemaFactory.createForClass(Map);
+
+MapSchema.virtual('markers', {
+  ref: Marker.name,
+  localField: 'id',
+  foreignField: 'map_id',
+});

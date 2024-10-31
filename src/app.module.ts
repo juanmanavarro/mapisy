@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppGateway } from './app.gateway';
 import { ApiController } from './api.controller';
 import { MapSchema } from './schemas/map.schema';
+import { Marker, MarkerSchema } from './schemas/marker.schema';
 
 @Module({
   imports: [
@@ -16,7 +17,10 @@ import { MapSchema } from './schemas/map.schema';
         uri: process.env.MONGO_URI,
       }),
     }),
-    MongooseModule.forFeature([{ name: Map.name, schema: MapSchema }]),
+    MongooseModule.forFeature([
+      { name: Map.name, schema: MapSchema },
+      { name: Marker.name, schema: MarkerSchema },
+    ]),
   ],
   controllers: [AppController, ApiController],
   providers: [

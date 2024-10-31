@@ -4,10 +4,14 @@ import { Response } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
+import { Marker, MarkerDocument } from './schemas/marker.schema';
 
 @Controller()
 export class AppController {
-  constructor(@InjectModel(Map.name) private mapModel: Model<MapDocument>) {}
+  constructor(
+    @InjectModel(Map.name) private mapModel: Model<MapDocument>,
+    @InjectModel(Marker.name) private markerModel: Model<MarkerDocument>
+  ) {}
 
   @Get()
   async getIndex(@Res() res: Response) {
@@ -36,6 +40,6 @@ export class AppController {
   }
 
   private createMarker(id: string, latitude: string, longitude: string) {
-    // TODO: Create marker
+    return this.markerModel.create({ map_id: id, latitude, longitude });
   }
 }
