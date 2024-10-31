@@ -21,7 +21,7 @@ export class Map {
   @Prop({ default: 0 })
   longitude: number;
 
-  @Prop({ default: 1 })
+  @Prop({ default: 2 })
   zoom: number;
 
   @Prop()
