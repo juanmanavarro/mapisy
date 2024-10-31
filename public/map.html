@@ -24,21 +24,24 @@
             zoom: 1,
         });
 
+        const id = window.location.pathname.split('/').pop();
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(map);
 
-        let incidenceData = [];
+        let markers = [];
         let socket;
 
         function connectSocket() {
             socket = io();
 
-            socket.on('nueva_incidencia', function(incidence) {
-                incidence = JSON.parse(incidence);
-                L.marker([parseFloat(incidence.latitude), parseFloat(incidence.longitude)], {
-                    icon: incidence.status === 'grave' ?
+            socket.on('marker:created', function(marker) {
+                if (marker.map_id !== id) return;
+
+                L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
+                    icon: marker.status === 'grave' ?
                         L.icon({
                             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
                             iconSize: [25, 41],
@@ -49,19 +52,18 @@
                 .bindPopup(function(layer) {
                     const coords = layer.getLatLng();
                     return `<b>Latitud:</b> ${coords.lat}<br>
-                            <b>Longitud:</b> ${coords.lng}<br>
-                            <b>Descripción:</b> ${incidence.description}`;
+                            <b>Longitud:</b> ${coords.lng}`;
                 })
                 .addTo(map);
 
-                incidenceData.push(incidence);
+                markers.push(marker);
             });
 
             socket.on('connect_error', (error) => {
                 console.error('Error de conexión:', error);
             });
         }
-        const id = window.location.pathname.split('/').pop();
+
         fetch(`/api/map/${id}`)
             .then(response => response.json())
             .then(data => {

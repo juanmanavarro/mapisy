@@ -5,12 +5,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
 import { Marker, MarkerDocument } from './schemas/marker.schema';
+import { AppGateway } from './app.gateway';
 
 @Controller()
 export class AppController {
   constructor(
     @InjectModel(Map.name) private mapModel: Model<MapDocument>,
-    @InjectModel(Marker.name) private markerModel: Model<MarkerDocument>
+    @InjectModel(Marker.name) private markerModel: Model<MarkerDocument>,
+    private appGateway: AppGateway,
   ) {}
 
   @Get()
@@ -40,6 +42,12 @@ export class AppController {
   }
 
   private createMarker(id: string, latitude: string, longitude: string) {
+    this.appGateway.send('marker:created', {
+      map_id: id,
+      latitude,
+      longitude,
+    });
+
     return this.markerModel.create({ map_id: id, latitude, longitude });
   }
 }
