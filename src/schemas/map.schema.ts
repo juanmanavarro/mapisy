@@ -27,6 +27,9 @@ export class Map {
   @Prop()
   api_key: string;
 
+  @Prop({ default: false })
+  isNew: boolean;
+
   markers: Marker[];
 }
 

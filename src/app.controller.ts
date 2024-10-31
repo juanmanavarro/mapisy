@@ -25,6 +25,11 @@ export class AppController {
     let map = await this.mapModel.findOne({ id });
     if (!map) {
       map = await this.mapModel.create({ id });
+      map.isNew = true;
+      await map.save();
+    } else {
+      map.isNew = false;
+      await map.save();
     }
 
     if (query.latitude && query.longitude) {

@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
+import { Response } from 'express';
 
 @Controller('api')
 export class ApiController {
@@ -10,9 +11,14 @@ export class ApiController {
   ) {}
 
   @Get('map/:id')
-  async getMap(@Param('id') id: string) {
+  async getMap(@Param('id') id: string, @Res() res: Response) {
     const map = await this.mapModel.findOne({ id }).populate('markers');
-    return map;
+
+    if (!map.isNew) {
+      map.api_key = undefined;
+    }
+
+    return res.json(map);
   }
 
   @Post('map/:id/config')
