@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppGateway } from './app.gateway';
 import { ApiController } from './api.controller';
+import { MapSchema } from './schemas/map.schema';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ApiController } from './api.controller';
         uri: process.env.MONGO_URI,
       }),
     }),
+    MongooseModule.forFeature([{ name: Map.name, schema: MapSchema }]),
   ],
   controllers: [AppController, ApiController],
   providers: [
