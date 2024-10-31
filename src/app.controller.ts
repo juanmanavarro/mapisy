@@ -32,11 +32,6 @@ export class AppController {
       await map.save();
     }
 
-    if (query.latitude && query.longitude) {
-      this.createMarker(id, query.latitude, query.longitude);
-      return res.status(201).json({ message: 'Marker created' });
-    }
-
     return res.sendFile(path.join(__dirname, '..', 'public', 'map.html'));
   }
 
