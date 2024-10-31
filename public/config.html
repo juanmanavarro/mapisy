@@ -7,5 +7,47 @@
 </head>
 <body>
     <h1>Config</h1>
+
+    <form id="configForm" method="post">
+        <label for="latitude">Center</label>
+        <input type="text" name="latitude" placeholder="Latitude">
+        <input type="text" name="longitude" placeholder="Longitude">
+        <br>
+        <label for="zoom">Zoom</label>
+        <input type="number" name="zoom" placeholder="Zoom">
+
+        <button type="submit">Create</button>
+    </form>
+
+    <script>
+        const id = window.location.pathname.split('/')[1];
+        document.getElementById('configForm').action = `/api/map/${id}/config`;
+        document.getElementById('configForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(document.getElementById('configForm'));
+            const data = {
+                latitude: formData.get('latitude'),
+                longitude: formData.get('longitude'),
+                zoom: formData.get('zoom')
+            };
+            fetch(document.getElementById('configForm').action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch(`/api/map/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('[name="latitude"]').value = data.latitude;
+                    document.querySelector('[name="longitude"]').value = data.longitude;
+                    document.querySelector('[name="zoom"]').value = data.zoom;
+                });
+        });
+    </script>
 </body>
 </html>

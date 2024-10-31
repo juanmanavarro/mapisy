@@ -62,7 +62,8 @@
         fetch(`/api/map/${id}`)
             .then(response => response.json())
             .then(data => {
-                data.forEach(marker => {
+                map.setView([data.latitude, data.longitude], data.zoom);
+                data.markers.forEach(marker => {
                     L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
                         icon: marker.status === 'grave' ?
                             L.icon({

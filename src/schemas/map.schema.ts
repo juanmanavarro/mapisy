@@ -7,10 +7,22 @@ export type MapDocument = Map & Document;
 @Schema({
   timestamps: true,
   versionKey: false,
+  toJSON: {
+    virtuals: true,
+  },
 })
 export class Map {
   @Prop({ required: true })
   id: string;
+
+  @Prop({ default: 0 })
+  latitude: number;
+
+  @Prop({ default: 0 })
+  longitude: number;
+
+  @Prop({ default: 1 })
+  zoom: number;
 
   markers: Marker[];
 }
