@@ -21,7 +21,7 @@ export class AppController {
   }
 
   @Get(':id')
-  async getMap(@Param('id') id: string, @Res() res: Response, @Query() query: any) {
+  async getMap(@Param('id') id: string, @Res() res: Response) {
     let map = await this.mapModel.findOne({ id });
     if (!map) {
       map = await this.mapModel.create({ id });
