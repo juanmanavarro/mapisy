@@ -25,6 +25,13 @@
             padding: 10px;
             border-radius: 5px;
         }
+
+        .key-message-code {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
@@ -32,9 +39,10 @@
 <body>
     <div id="map" style="width: 100%; height: 100vh;"></div>
     <div class="key-message">
-        <label for="api-key">API Key</label>
-        <input type="text" id="api-key" placeholder="API Key">
-        <small>Save this key to use the API. It will not be shown again.</small>
+        <div class="key-message-code">
+            <pre id="curl-command"></pre>
+        </div>
+        <small>Save this command to use the API. The API key will not be shown again.</small>
         <form id="configForm" method="post">
             <label for="latitude">Center</label>
             <input type="text" name="latitude" placeholder="Latitude">
@@ -94,7 +102,18 @@
 
                 if (data.api_key) {
                     document.querySelector('.key-message').style.display = 'flex';
-                    document.getElementById('api-key').value = data.api_key;
+                    const lat = document.querySelector('[name="latitude"]').value || '40.416775';
+                    const lng = document.querySelector('[name="longitude"]').value || '-3.703790';
+
+                    const curlCommand = `curl -X POST \\
+    'https://incidenci.es/api/map/${id}/marker' \\
+    -H 'Content-Type: application/json' \\
+    -H 'Authorization: Bearer ${data.api_key}' \\
+    -d '{
+        "latitude": ${lat},
+        "longitude": ${lng}
+}'`;
+                    document.getElementById('curl-command').textContent = curlCommand;
                 }
 
                 data.markers.forEach(marker => {
@@ -182,6 +201,23 @@
             const center = map.getCenter();
             document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
             document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
+
+            // Actualizar el comando curl con los nuevos valores
+            if (document.getElementById('curl-command').textContent) {
+                const lat = center.lat.toFixed(6);
+                const lng = center.lng.toFixed(6);
+                const apiKey = document.getElementById('curl-command').textContent.match(/Bearer\s+([^\n']+)/)[1];
+
+                const curlCommand = `curl -X POST \\
+    'https://incidenci.es/api/map/${id}/marker' \\
+    -H 'Content-Type: application/json' \\
+    -H 'Authorization: Bearer ${apiKey}' \\
+    -d '{
+        "latitude": ${lat},
+        "longitude": ${lng}
+    }'`;
+                document.getElementById('curl-command').textContent = curlCommand;
+            }
         });
     </script>
 </body>

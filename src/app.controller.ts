@@ -1,6 +1,6 @@
-import { Controller, Get, Param, Post, Query, Res, Headers } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Res, Headers, Body } from '@nestjs/common';
 import * as path from 'path';
-import { Response } from 'express';
+import { query, Response } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
@@ -36,18 +36,14 @@ export class AppController {
   }
 
   @Post(':id')
-  async postMarker(@Param('id') id: string, @Query() query: any, @Headers('authorization') auth: string, @Res() res: Response) {
+  async postMarker(@Param('id') id: string, @Body() body: any, @Headers('authorization') auth: string, @Res() res: Response) {
     const map = await this.mapModel.findOne({ id });
     if (!map || !auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
       return res.status(401).json({ message: 'Invalid API key'});
     }
 
-    if (!query.latitude || !query.longitude) {
-      return res.status(400).json({ message: 'Latitud y longitud son requeridos' });
-    }
-
-    const latitude = parseFloat(query.latitude);
-    const longitude = parseFloat(query.longitude);
+    const latitude = parseFloat(body.latitude);
+    const longitude = parseFloat(body.longitude);
 
     if (isNaN(latitude) || isNaN(longitude)) {
       return res.status(400).json({ message: 'Latitud y longitud deben ser números válidos' });
@@ -57,7 +53,7 @@ export class AppController {
       return res.status(400).json({ message: 'Coordenadas fuera de rango' });
     }
 
-    this.createMarker(id, query.latitude, query.longitude);
+    this.createMarker(id, body.latitude, body.longitude);
     return res.status(201).json({ message: 'Marker created' });
   }
 
