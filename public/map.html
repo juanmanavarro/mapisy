@@ -21,6 +21,9 @@
             flex-direction: column;
             gap: 5px;
             z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -151,6 +154,13 @@
 
         map.on('zoom', function() {
             document.querySelector('[name="zoom"]').value = parseInt(map.getZoom().toFixed(0));
+        });
+
+        // Agregar este nuevo evento para actualizar lat/lng cuando el mapa se mueve
+        map.on('moveend', function() {
+            const center = map.getCenter();
+            document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
+            document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
         });
     </script>
 </body>
