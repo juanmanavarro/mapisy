@@ -32,12 +32,25 @@
             padding: 10px;
             border-radius: 5px;
         }
+
+        .center-marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            color: red;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+        }
     </style>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 </head>
 <body>
     <div id="map" style="width: 100%; height: 100vh;"></div>
+    <div class="center-marker">×</div>
     <div class="key-message">
         <div class="key-message-code">
             <pre id="curl-command"></pre>
@@ -100,6 +113,10 @@
             .then(data => {
                 map.setView([data.latitude, data.longitude], data.zoom);
 
+                if (!data.isNew) {
+                    document.querySelector('.center-marker').style.display = 'none';
+                }
+
                 if (data.api_key) {
                     document.querySelector('.key-message').style.display = 'flex';
                     const lat = document.querySelector('[name="latitude"]').value || '40.416775';
@@ -141,17 +158,6 @@
                 longitude: formData.get('longitude'),
                 zoom: formData.get('zoom')
             };
-
-            const apiKeyInput = document.getElementById('api-key');
-            if (apiKeyInput.value) {
-                navigator.clipboard.writeText(apiKeyInput.value)
-                    .then(() => {
-                        alert('API key copiada al portapapeles');
-                    })
-                    .catch(err => {
-                        console.error('Error al copiar al portapapeles:', err);
-                    });
-            }
 
             fetch(`/api/map/${id}/config`, {
                 method: 'POST',
