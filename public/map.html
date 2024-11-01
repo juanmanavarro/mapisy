@@ -38,7 +38,7 @@
             <input type="text" name="longitude" placeholder="Longitude">
             <br>
             <label for="zoom">Zoom</label>
-            <input type="number" name="zoom" placeholder="Zoom" min="0" max="19">
+            <input type="number" name="zoom" placeholder="Zoom">
             <br>
             <button type="submit">Create</button>
         </form>
@@ -147,6 +147,10 @@
                 e.target.value = limitedZoom; // Actualizar el valor del input si estaba fuera de rango
                 map.setZoom(limitedZoom);
             }
+        });
+
+        map.on('zoom', function() {
+            document.querySelector('[name="zoom"]').value = parseInt(map.getZoom().toFixed(0));
         });
     </script>
 </body>
