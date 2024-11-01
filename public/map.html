@@ -114,7 +114,6 @@
             })
             .catch(error => console.error('Error:', error));
 
-        document.getElementById('configForm').action = `/api/map/${id}/config`;
         document.getElementById('configForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const formData = new FormData(document.getElementById('configForm'));
@@ -123,7 +122,19 @@
                 longitude: formData.get('longitude'),
                 zoom: formData.get('zoom')
             };
-            fetch(document.getElementById('configForm').action, {
+
+            const apiKeyInput = document.getElementById('api-key');
+            if (apiKeyInput.value) {
+                navigator.clipboard.writeText(apiKeyInput.value)
+                    .then(() => {
+                        alert('API key copiada al portapapeles');
+                    })
+                    .catch(err => {
+                        console.error('Error al copiar al portapapeles:', err);
+                    });
+            }
+
+            fetch(`/api/map/${id}/config`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
