@@ -41,6 +41,22 @@ export class AppController {
     if (!map || !auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
       return res.status(401).json({ message: 'Invalid API key'});
     }
+
+    if (!query.latitude || !query.longitude) {
+      return res.status(400).json({ message: 'Latitud y longitud son requeridos' });
+    }
+
+    const latitude = parseFloat(query.latitude);
+    const longitude = parseFloat(query.longitude);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return res.status(400).json({ message: 'Latitud y longitud deben ser números válidos' });
+    }
+
+    if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+      return res.status(400).json({ message: 'Coordenadas fuera de rango' });
+    }
+
     this.createMarker(id, query.latitude, query.longitude);
     return res.status(201).json({ message: 'Marker created' });
   }
