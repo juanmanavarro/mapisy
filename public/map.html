@@ -129,6 +129,16 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload(); // Refresca la página si la respuesta es exitosa
+                } else {
+                    console.error('Error al guardar la configuración');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
         });
 
