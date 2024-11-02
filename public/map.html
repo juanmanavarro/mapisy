@@ -196,7 +196,6 @@
                 .catch(err => console.error('Error al copiar:', err));
         });
 
-
         document.getElementById('executeButton').addEventListener('click', () => {
             fetch(`/api/maps/${id}/markers`, {
                 method: 'POST',
@@ -235,7 +234,6 @@
             document.querySelector('[name="zoom"]').value = parseInt(map.getZoom().toFixed(0));
         });
 
-        // Agregar este nuevo evento para actualizar lat/lng cuando el mapa se mueve
         map.on('moveend', function() {
             const center = map.getCenter();
             document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
