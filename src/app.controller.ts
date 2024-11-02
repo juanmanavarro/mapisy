@@ -27,7 +27,8 @@ export class AppController {
       map = await this.mapModel.create({ id });
       map.isNew = true;
       await map.save();
-    } else {
+    }
+    else {
       map.isNew = false;
       await map.save();
     }

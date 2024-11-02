@@ -26,9 +26,13 @@ export class ApiController {
   }
 
   @Post('maps/:id/markers')
-  async postMarker(@Param('id') id: string, @Body() body: any, @Headers('authorization') auth: string, @Res() res: Response) {
+  async createMarker(@Param('id') id: string, @Body() body: any, @Headers('authorization') auth: string, @Res() res: Response) {
     const map = await this.mapModel.findOne({ id });
-    if (!map || !auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
+    if (!map) {
+      return res.status(404).json({ message: 'Map not found' });
+    }
+
+    if (!auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
       return res.status(401).json({ message: 'Invalid API key'});
     }
 
@@ -43,24 +47,21 @@ export class ApiController {
       return res.status(400).json({ message: 'Coordenadas fuera de rango' });
     }
 
-    this.createMarker(id, body.latitude, body.longitude);
-    return res.status(201).json({ message: 'Marker created' });
-  }
+    await this.markerModel.create({ map_id: id, latitude, longitude });
 
-  private createMarker(id: string, latitude: string, longitude: string) {
     this.appGateway.send('marker:created', {
       map_id: id,
       latitude,
       longitude,
     });
 
-    return this.markerModel.create({ map_id: id, latitude, longitude });
+    return res.status(201).json({ message: 'Marker created' });
   }
 
   @Post('maps/:id/config')
-  async configMap(@Param('id') id: string, @Body() body: any) {
-    if (!body.latitude || !body.longitude || !body.zoom) {
-      throw new Error('Latitud, longitud y zoom son requeridos');
+  async config(@Param('id') id: string, @Body() body: any) {
+    if (!body.latitude || !body.longitude || !body.zoom || !body.email) {
+      throw new Error('Latitud, longitud, zoom y email son requeridos');
     }
 
     await this.mapModel.updateOne({ id }, { $set: body });

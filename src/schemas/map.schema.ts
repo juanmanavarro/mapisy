@@ -15,6 +15,9 @@ export class Map {
   @Prop({ required: true, unique: true })
   id: string;
 
+  @Prop()
+  email: string;
+
   @Prop({ default: 0 })
   latitude: number;
 
