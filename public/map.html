@@ -118,7 +118,7 @@
             .then(data => {
                 map.setView([data.latitude, data.longitude], data.zoom);
 
-                if (!data.isNew) {
+                if (!data.new) {
                     document.querySelector('.center-marker').style.display = 'none';
                 }
 

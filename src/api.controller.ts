@@ -18,7 +18,7 @@ export class ApiController {
   async getMap(@Param('id') id: string, @Res() res: Response) {
     const map = await this.mapModel.findOne({ id }).populate('markers');
 
-    if (!map.isNew) {
+    if (!map.new) {
       map.api_key = undefined;
     }
 

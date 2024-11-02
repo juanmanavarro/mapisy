@@ -31,7 +31,7 @@ export class Map {
   api_key: string;
 
   @Prop({ default: false })
-  isNew: boolean;
+  new: boolean;
 
   markers: Marker[];
 }
@@ -45,7 +45,7 @@ MapSchema.virtual('markers', {
 });
 
 MapSchema.pre('save', function(next) {
-  if (this.isNew) {
+  if (this.new) {
     this.api_key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
   next();

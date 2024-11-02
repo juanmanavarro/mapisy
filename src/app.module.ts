@@ -6,6 +6,7 @@ import { AppGateway } from './app.gateway';
 import { ApiController } from './api.controller';
 import { MapSchema } from './schemas/map.schema';
 import { Marker, MarkerSchema } from './schemas/marker.schema';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -21,6 +22,20 @@ import { Marker, MarkerSchema } from './schemas/marker.schema';
       { name: Map.name, schema: MapSchema },
       { name: Marker.name, schema: MarkerSchema },
     ]),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.panel247.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      },
+      defaults: {
+        from: `"Instam.app" <${process.env.EMAIL_USER}>`,
+      },
+    }),
   ],
   controllers: [AppController, ApiController],
   providers: [
