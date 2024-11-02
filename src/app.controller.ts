@@ -35,38 +35,6 @@ export class AppController {
     return res.sendFile(path.join(__dirname, '..', 'public', 'map.html'));
   }
 
-  @Post(':id')
-  async postMarker(@Param('id') id: string, @Body() body: any, @Headers('authorization') auth: string, @Res() res: Response) {
-    const map = await this.mapModel.findOne({ id });
-    if (!map || !auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
-      return res.status(401).json({ message: 'Invalid API key'});
-    }
-
-    const latitude = parseFloat(body.latitude);
-    const longitude = parseFloat(body.longitude);
-
-    if (isNaN(latitude) || isNaN(longitude)) {
-      return res.status(400).json({ message: 'Latitud y longitud deben ser números válidos' });
-    }
-
-    if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-      return res.status(400).json({ message: 'Coordenadas fuera de rango' });
-    }
-
-    this.createMarker(id, body.latitude, body.longitude);
-    return res.status(201).json({ message: 'Marker created' });
-  }
-
-  private createMarker(id: string, latitude: string, longitude: string) {
-    this.appGateway.send('marker:created', {
-      map_id: id,
-      latitude,
-      longitude,
-    });
-
-    return this.markerModel.create({ map_id: id, latitude, longitude });
-  }
-
   @Get(':id/config')
   async configMap(@Param('id') id: string, @Res() res: Response) {
     let map = await this.mapModel.findOne({ id });

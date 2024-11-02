@@ -54,6 +54,7 @@
     <div class="key-message">
         <div class="key-message-code">
             <pre id="curl-command"></pre>
+            <button id="copyButton" style="margin-top: 5px;">Copiar comando</button>
         </div>
         <small>Save this command to use the API. The API key will not be shown again.</small>
         <form id="configForm" method="post">
@@ -108,7 +109,7 @@
             });
         }
 
-        fetch(`/api/map/${id}`)
+        fetch(`/api/maps/${id}`)
             .then(response => response.json())
             .then(data => {
                 map.setView([data.latitude, data.longitude], data.zoom);
@@ -123,7 +124,7 @@
                     const lng = document.querySelector('[name="longitude"]').value || '-3.703790';
 
                     const curlCommand = `curl -X POST \\
-    'https://incidenci.es/api/map/${id}/marker' \\
+    '${window.location.origin}/api/maps/${id}/markers' \\
     -H 'Content-Type: application/json' \\
     -H 'Authorization: Bearer ${data.api_key}' \\
     -d '{
@@ -159,7 +160,7 @@
                 zoom: formData.get('zoom')
             };
 
-            fetch(`/api/map/${id}/config`, {
+            fetch(`/api/maps/${id}/config`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -168,7 +169,16 @@
             })
             .then(response => {
                 if (response.ok) {
-                    window.location.reload(); // Refresca la página si la respuesta es exitosa
+                    const curlCommand = document.getElementById('curl-command').textContent;
+                    navigator.clipboard.writeText(curlCommand)
+                        .then(() => {
+                            alert('¡Comando copiado al portapapeles!');
+                            window.location.reload();
+                        })
+                        .catch(err => {
+                            console.error('Error al copiar:', err);
+                            window.location.reload();
+                        });
                 } else {
                     console.error('Error al guardar la configuración');
                 }
@@ -178,8 +188,15 @@
             });
         });
 
+        document.getElementById('copyButton').addEventListener('click', () => {
+            const curlCommand = document.getElementById('curl-command').textContent;
+            navigator.clipboard.writeText(curlCommand)
+                .then(() => alert('¡Comando copiado al portapapeles!'))
+                .catch(err => console.error('Error al copiar:', err));
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            fetch(`/api/map/${id}`)
+            fetch(`/api/maps/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     document.querySelector('[name="latitude"]').value = data.latitude;
@@ -208,14 +225,13 @@
             document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
             document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
 
-            // Actualizar el comando curl con los nuevos valores
             if (document.getElementById('curl-command').textContent) {
                 const lat = center.lat.toFixed(6);
                 const lng = center.lng.toFixed(6);
                 const apiKey = document.getElementById('curl-command').textContent.match(/Bearer\s+([^\n']+)/)[1];
 
                 const curlCommand = `curl -X POST \\
-    'https://incidenci.es/api/map/${id}/marker' \\
+    '${window.location.origin}/api/maps/${id}/markers' \\
     -H 'Content-Type: application/json' \\
     -H 'Authorization: Bearer ${apiKey}' \\
     -d '{

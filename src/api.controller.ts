@@ -1,16 +1,20 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res, Headers } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
 import { Response } from 'express';
+import { AppGateway } from './app.gateway';
+import { Marker, MarkerDocument } from './schemas/marker.schema';
 
 @Controller('api')
 export class ApiController {
   constructor(
     @InjectModel(Map.name) private mapModel: Model<MapDocument>,
+    @InjectModel(Marker.name) private markerModel: Model<MarkerDocument>,
+    private appGateway: AppGateway,
   ) {}
 
-  @Get('map/:id')
+  @Get('maps/:id')
   async getMap(@Param('id') id: string, @Res() res: Response) {
     const map = await this.mapModel.findOne({ id }).populate('markers');
 
@@ -21,7 +25,39 @@ export class ApiController {
     return res.json(map);
   }
 
-  @Post('map/:id/config')
+  @Post('maps/:id/markers')
+  async postMarker(@Param('id') id: string, @Body() body: any, @Headers('authorization') auth: string, @Res() res: Response) {
+    const map = await this.mapModel.findOne({ id });
+    if (!map || !auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
+      return res.status(401).json({ message: 'Invalid API key'});
+    }
+
+    const latitude = parseFloat(body.latitude);
+    const longitude = parseFloat(body.longitude);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return res.status(400).json({ message: 'Latitud y longitud deben ser números válidos' });
+    }
+
+    if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+      return res.status(400).json({ message: 'Coordenadas fuera de rango' });
+    }
+
+    this.createMarker(id, body.latitude, body.longitude);
+    return res.status(201).json({ message: 'Marker created' });
+  }
+
+  private createMarker(id: string, latitude: string, longitude: string) {
+    this.appGateway.send('marker:created', {
+      map_id: id,
+      latitude,
+      longitude,
+    });
+
+    return this.markerModel.create({ map_id: id, latitude, longitude });
+  }
+
+  @Post('maps/:id/config')
   async configMap(@Param('id') id: string, @Body() body: any) {
     if (!body.latitude || !body.longitude || !body.zoom) {
       throw new Error('Latitud, longitud y zoom son requeridos');
