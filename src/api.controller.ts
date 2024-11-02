@@ -5,6 +5,7 @@ import { MapDocument } from './schemas/map.schema';
 import { Response } from 'express';
 import { AppGateway } from './app.gateway';
 import { Marker, MarkerDocument } from './schemas/marker.schema';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Controller('api')
 export class ApiController {
@@ -12,6 +13,7 @@ export class ApiController {
     @InjectModel(Map.name) private mapModel: Model<MapDocument>,
     @InjectModel(Marker.name) private markerModel: Model<MarkerDocument>,
     private appGateway: AppGateway,
+    private mailerService: MailerService,
   ) {}
 
   @Get('maps/:id')
@@ -59,11 +61,24 @@ export class ApiController {
   }
 
   @Post('maps/:id/config')
-  async config(@Param('id') id: string, @Body() body: any) {
-    if (!body.latitude || !body.longitude || !body.zoom || !body.email) {
-      throw new Error('Latitud, longitud, zoom y email son requeridos');
+  async config(@Param('id') id: string, @Body() body: any, @Res() res: Response) {
+    if (!body.latitude || !body.longitude || !body.zoom || !body.email || !body.title) {
+      return res.status(400).json({ message: 'Latitud, longitud, zoom y email son requeridos' });
     }
 
-    await this.mapModel.updateOne({ id }, { $set: body });
+    const oldMap = await this.mapModel.findOne({ id });
+    const wasEmpty = !oldMap.email;
+
+    const map = await this.mapModel.updateOne({ id }, { $set: body });
+
+    if (wasEmpty && body.email) {
+      await this.mailerService.sendMail({
+        to: body.email,
+        subject: 'Instam.app: New map created',
+        text: `The map with url https://instam.app/${id} has been created. Enjoy!`,
+      });
+    }
+
+    return res.status(200).json({ message: 'Map updated' });
   }
 }

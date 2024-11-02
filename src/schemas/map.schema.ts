@@ -18,6 +18,12 @@ export class Map {
   @Prop()
   email: string;
 
+  @Prop()
+  title: string;
+
+  @Prop()
+  description: string;
+
   @Prop({ default: 0 })
   latitude: number;
 

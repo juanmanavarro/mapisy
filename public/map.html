@@ -59,14 +59,20 @@
         </div>
         <small>Save this command to use the API. The API key will not be shown again.</small>
         <form id="configForm" method="post">
-            <label for="email">Email</label>
+            <label for="email">Email <span style="color: red;">*</span></label>
             <input type="text" name="email" placeholder="Email">
             <br>
-            <label for="latitude">Center</label>
+            <label for="title">Title <span style="color: red;">*</span></label>
+            <input type="text" name="title" placeholder="Title">
+            <br>
+            <label for="description">Description</label>
+            <input type="text" name="description" placeholder="Description">
+            <br>
+            <label for="latitude">Center <span style="color: red;">*</span></label>
             <input type="text" name="latitude" placeholder="Latitude">
             <input type="text" name="longitude" placeholder="Longitude">
             <br>
-            <label for="zoom">Zoom</label>
+            <label for="zoom">Zoom <span style="color: red;">*</span></label>
             <input type="number" name="zoom" placeholder="Zoom">
             <br>
             <button type="submit">Create</button>
@@ -122,7 +128,7 @@
                     document.querySelector('.center-marker').style.display = 'none';
                 }
 
-                if (data.api_key) {
+                if (!data.email) {
                     document.querySelector('.key-message').style.display = 'flex';
                     const lat = document.querySelector('[name="latitude"]').value || '0';
                     const lng = document.querySelector('[name="longitude"]').value || '0';
@@ -134,7 +140,7 @@
     -d '{
         "latitude": ${lat},
         "longitude": ${lng}
-}'`;
+    }'`;
                     document.getElementById('curl-command').textContent = curlCommand;
                 }
 
@@ -162,7 +168,9 @@
                 latitude: formData.get('latitude'),
                 longitude: formData.get('longitude'),
                 zoom: formData.get('zoom'),
-                email: formData.get('email')
+                email: formData.get('email'),
+                title: formData.get('title'),
+                description: formData.get('description')
             };
 
             fetch(`/api/maps/${id}/config`, {
