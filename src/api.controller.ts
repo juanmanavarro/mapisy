@@ -66,12 +66,17 @@ export class ApiController {
       return res.status(400).json({ message: 'Latitud, longitud, zoom y email son requeridos' });
     }
 
-    const oldMap = await this.mapModel.findOne({ id });
-    const wasEmpty = !oldMap.email;
+    const map = await this.mapModel.findOne({ id });
+    const isNew = !map.email;
 
-    const map = await this.mapModel.updateOne({ id }, { $set: body });
+    map.latitude = body.latitude;
+    map.longitude = body.longitude;
+    map.zoom = body.zoom;
+    map.email = body.email;
+    map.title = body.title;
+    await map.save();
 
-    if (wasEmpty && body.email) {
+    if (isNew && body.email) {
       await this.mailerService.sendMail({
         to: body.email,
         subject: 'Instam.app: New map created',

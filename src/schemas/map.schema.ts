@@ -36,10 +36,8 @@ export class Map {
   @Prop()
   api_key: string;
 
-  @Prop({ default: false })
-  new: boolean;
-
   markers: Marker[];
+  new: boolean;
 }
 
 export const MapSchema = SchemaFactory.createForClass(Map);
@@ -51,8 +49,12 @@ MapSchema.virtual('markers', {
 });
 
 MapSchema.pre('save', function(next) {
-  if (this.new) {
+  if (this.isNew) {
     this.api_key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
   next();
+});
+
+MapSchema.virtual('new').get(function() {
+  return !this.email;
 });
