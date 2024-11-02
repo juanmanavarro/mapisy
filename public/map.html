@@ -54,7 +54,8 @@
     <div class="key-message">
         <div class="key-message-code">
             <pre id="curl-command"></pre>
-            <button id="copyButton" style="margin-top: 5px;">Copiar comando</button>
+            <button id="copyButton" style="margin-top: 5px;">Copiar</button>
+            <button id="executeButton" style="margin-top: 5px;">Ejecutar</button>
         </div>
         <small>Save this command to use the API. The API key will not be shown again.</small>
         <form id="configForm" method="post">
@@ -193,6 +194,21 @@
             navigator.clipboard.writeText(curlCommand)
                 .then(() => alert('¡Comando copiado al portapapeles!'))
                 .catch(err => console.error('Error al copiar:', err));
+        });
+
+
+        document.getElementById('executeButton').addEventListener('click', () => {
+            fetch(`/api/maps/${id}/markers`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${document.getElementById('curl-command').textContent.match(/Bearer\s+([^\n']+)/)[1]}`
+                },
+                body: JSON.stringify({
+                    latitude: document.querySelector('[name="latitude"]').value,
+                    longitude: document.querySelector('[name="longitude"]').value
+                })
+            });
         });
 
         document.addEventListener('DOMContentLoaded', () => {
