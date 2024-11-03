@@ -51,7 +51,7 @@ The map with url ${process.env.APP_URL}/${id} has been created. The API key is $
 
 You can create markers using the following curl command:
 
-curl -X POST ${process.env.APP_URL}/api/maps/${id}/markers -H "Authorization: Bearer ${map.api_key}" -H "Content-Type: application/json" -d '{"latitude": 0, "longitude": 0}'
+curl -X POST ${process.env.APP_URL}/api/maps/${id}/markers -H "Authorization: Bearer ${map.api_key}" -H "Content-Type: application/json" -d '{"latitude": ${map.latitude}, "longitude": ${map.longitude}}'
 
 Enjoy!
 `,
