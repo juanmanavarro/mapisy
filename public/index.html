@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instam.app - Create maps effortlessly, mark spots instantly</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         /* Reset and base styles */
         * {
@@ -93,6 +94,7 @@
             background-color: transparent;
             border: 2px solid #2563eb;
             color: #2563eb;
+            text-decoration: none;
         }
 
         .secondary-button:hover {
@@ -336,7 +338,6 @@
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#api">API</a></li>
-            <li><a href="#docs">Documentation</a></li>
         </ul>
         <button class="cta-button">Get Started</button>
     </nav>
@@ -347,7 +348,7 @@
             <p>Easily create maps and add markers with our API. Perfect for tracking locations, sharing points of interest, and visualizing data with minimal setup. Just create, customize, and share your map in seconds.</p>
             <div class="hero-buttons">
                 <button id="try-demo" class="primary-button">Try Demo</button>
-                <button class="secondary-button">View Documentation</button>
+                <a href="#api" class="secondary-button">View API</a>
             </div>
         </div>
         <div class="hero-image" style="display: flex; justify-content: center; align-items: center;flex-direction: column;">
@@ -391,15 +392,18 @@
 
     <section id="api" class="api-section">
         <h2>Simple API</h2>
-        <div class="code-example">
-            <pre><code>// Create a new marker
-curl -X POST https://instam.app/api/maps/{id}/markers \
--H "Authorization: Bearer {API_KEY}" \
--H "Content-Type: application/json" \
--d "{
-    \"latitude\": 0,
-    \"longitude\": 0
-}"</code></pre>
+        <div>
+            <h3 style="margin-bottom: 1rem;max-width: 800px;margin: 0 auto;">Create a marker</h3>
+            <div class="code-example">
+
+                <pre><code>curl -X POST https://instam.app/api/maps/{id}/markers \
+    -H "Authorization: Bearer {API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "{
+        \"latitude\": 0,
+        \"longitude\": 0
+    }"</code></pre>
+            </div>
         </div>
     </section>
 
@@ -433,8 +437,7 @@ curl -X POST https://instam.app/api/maps/{id}/markers \
 
     <script>
         document.getElementById('try-demo').addEventListener('click', () => {
-            // Comando curl a copiar
-            const curlCommand = `curl -X POST https://instam.app/api/maps/demo/markers \\
+            const curlCommand = `curl -X POST ${window.location.origin}/api/maps/demo/markers \\
     -H "Authorization: Bearer 6a2men56hj4j9gpccm6qng" \\
     -H "Content-Type: application/json" \\
     -d "{

@@ -19,7 +19,7 @@ export class AppController {
   @Get(':id')
   async getMap(@Param('id') id: string, @Res() res: Response) {
     if (id.startsWith('favicon')) {
-      return res.sendFile(path.join(__dirname, '..', 'public', 'favicon.jpg'));
+      return res.sendFile(path.join(__dirname, '..', 'public', 'favicon.ico'));
     }
 
     let map = await this.mapModel.findOne({ id });
@@ -28,6 +28,11 @@ export class AppController {
     }
 
     return res.sendFile(path.join(__dirname, '..', 'public', 'map.html'));
+  }
+
+  @Get('*')
+  notFound(@Res() res: Response) {
+    return res.status(404).sendFile(path.join(__dirname, '..', 'public', '404.html'));
   }
 
   // @Get(':id/config')
