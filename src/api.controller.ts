@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res, Headers } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res, Headers, Query } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
@@ -28,7 +28,12 @@ export class ApiController {
   }
 
   @Post('maps/:id/markers')
-  async createMarker(@Param('id') id: string, @Body() body: any, @Headers('authorization') auth: string, @Res() res: Response) {
+  async createMarker(
+    @Param('id') id: string,
+    @Body() body: any,
+    @Headers('authorization') auth: string,
+    @Res() res: Response,
+  ) {
     const map = await this.mapModel.findOne({ id });
     if (!map) {
       return res.status(404).json({ message: 'Map not found' });
@@ -38,8 +43,30 @@ export class ApiController {
       return res.status(401).json({ message: 'Invalid API key'});
     }
 
-    const latitude = parseFloat(body.latitude);
-    const longitude = parseFloat(body.longitude);
+    return await this.handleMarkerOperation(map, body, id, res);
+  }
+
+  @Get('maps/:id/markers')
+  async getMarker(
+    @Param('id') id: string,
+    @Query() query: any,
+    @Res() res: Response,
+  ) {
+    const map = await this.mapModel.findOne({ id });
+    if (!map) {
+      return res.status(404).json({ message: 'Map not found' });
+    }
+
+    if (query.apiKey !== map.api_key) {
+      return res.status(401).json({ message: 'Invalid API key'});
+    }
+
+    return await this.handleMarkerOperation(map, query, id, res);
+  }
+
+  private async handleMarkerOperation(map: any, data: any, id: string, res: Response) {
+    const latitude = parseFloat(data.latitude);
+    const longitude = parseFloat(data.longitude);
 
     if (isNaN(latitude) || isNaN(longitude)) {
       return res.status(400).json({ message: 'Latitud y longitud deben ser números válidos' });

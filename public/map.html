@@ -44,18 +44,34 @@
             font-size: 24px;
             pointer-events: none;
         }
+
+        .map-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 300px;
+            display: none;
+        }
     </style>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 </head>
 <body>
     <div id="map" style="width: 100%; height: 100vh;"></div>
+    <div class="map-info" style="display: none;">
+        <h1 style="margin: 0;" id="map-title">Insta Map</h1>
+        <p id="map-description" style="display: none;">Create your own map with the API.</p>
+    </div>
     <div class="center-marker">×</div>
     <div class="key-message">
         <div class="key-message-code">
             <pre id="curl-command"></pre>
-            <button id="copyButton" style="margin-top: 5px;">Copiar</button>
-            <button id="executeButton" style="margin-top: 5px;">Ejecutar</button>
+            <button id="copyButton" style="margin-top: 5px;">Copy</button>
+            <button id="executeButton" style="margin-top: 5px;">Execute</button>
         </div>
         <small>Save this command to use the API. The API key will not be shown again.</small>
         <form id="configForm" method="post">
@@ -66,7 +82,7 @@
             <input type="text" name="title" placeholder="Title">
             <br>
             <label for="description">Description</label>
-            <input type="text" name="description" placeholder="Description">
+            <textarea name="description" placeholder="Description"></textarea>
             <br>
             <label for="latitude">Center <span style="color: red;">*</span></label>
             <input type="text" name="latitude" placeholder="Latitude">
@@ -75,7 +91,7 @@
             <label for="zoom">Zoom <span style="color: red;">*</span></label>
             <input type="number" name="zoom" placeholder="Zoom">
             <br>
-            <button type="submit">Create</button>
+            <button type="submit">Create map</button>
         </form>
     </div>
     <script>
@@ -123,6 +139,13 @@
             .then(response => response.json())
             .then(data => {
                 map.setView([data.latitude, data.longitude], data.zoom);
+
+                if (data.title) {
+                    document.querySelector('.map-info').style.display = 'block';
+                    document.getElementById('map-title').textContent = data.title;
+                    document.getElementById('map-description').textContent = data.description;
+                    document.getElementById('map-description').style.display = data.description ? 'block' : 'none';
+                }
 
                 if (!data.new) {
                     document.querySelector('.center-marker').style.display = 'none';
@@ -209,17 +232,10 @@
         });
 
         document.getElementById('executeButton').addEventListener('click', () => {
-            fetch(`/api/maps/${id}/markers`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${document.getElementById('curl-command').textContent.match(/Bearer\s+([^\n']+)/)[1]}`
-                },
-                body: JSON.stringify({
-                    latitude: document.querySelector('[name="latitude"]').value,
-                    longitude: document.querySelector('[name="longitude"]').value
-                })
-            });
+            alert('Markers are not saved to the database until the map is created.');
+            const lat = document.querySelector('[name="latitude"]').value || '0';
+            const lng = document.querySelector('[name="longitude"]').value || '0';
+            L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
