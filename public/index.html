@@ -325,8 +325,6 @@
 <body>
     <nav class="navbar">
         <div class="logo">
-            <!-- <img src="https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?w=48&h=48&fit=crop" alt="Logo"
-                class="logo-img"> -->
             <span>Instam.app</span>
         </div>
         <ul class="nav-links">
@@ -339,7 +337,7 @@
 
     <header class="hero">
         <div class="hero-content">
-            <h1>Create maps effortlessly, mark spots instantly</h1>
+            <h1>Create maps effortlessly, <br>mark spots instantly</h1>
             <p>Easily create interactive maps and add custom markers with our API. Perfect for tracking locations, sharing points of interest, and visualizing data with minimal setup. Just create, customize, and share your map in minutes.</p>
             <div class="hero-buttons">
                 <button class="primary-button">Try Demo</button>
@@ -378,23 +376,30 @@
     </section>
 
     <section id="api" class="api-section">
-        <h2>Simple API Integration</h2>
+        <h2>2. Simple API Integration</h2>
         <div class="code-example">
-            <pre><code>
-                    // Create a new marker
-                    fetch('https://api.mapmarker.com/v1/markers', {
-                    method: 'POST',
-                    headers: {
-                    'Authorization': 'YOUR_API_KEY',
-                    'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                    lat: 40.7128,
-                    lng: -74.0060,
-                    title: 'New York'
-                    })
-                    });
-                </code></pre>
+            <pre><code>// Create a new marker
+curl -X POST https://instam.app/api/maps/{id}/markers \
+-H "Authorization: Bearer {API_KEY}" \
+-H "Content-Type: application/json" \
+-d '{
+    "latitude": 0,
+    "longitude": 0
+}'</code></pre>
+        </div>
+    </section>
+
+    <section id="api" class="api-section">
+        <h2>2. Simple API Integration</h2>
+        <div class="code-example">
+            <pre><code>// Create a new marker
+curl -X POST https://instam.app/api/maps/{id}/markers \
+-H "Authorization: Bearer {API_KEY}" \
+-H "Content-Type: application/json" \
+-d '{
+    "latitude": 0,
+    "longitude": 0
+}'</code></pre>
         </div>
     </section>
 
