@@ -75,6 +75,6 @@ export class MarkerController {
       longitude,
     });
 
-    return res.status(201).json({ message: 'Marker created', id: marker._id });
+    return res.status(201).json({ message: 'Marker created', marker });
   }
 }
