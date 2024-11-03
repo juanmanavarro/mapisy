@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Insta Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <link rel="icon" type="image/jpg" href="/favicon.jpg">
     <script defer data-domain="instam.app" src="https://analytics.juanma.app/js/script.js"></script>
     <style>
@@ -21,7 +22,7 @@
             flex-direction: column;
             gap: 5px;
             z-index: 1000;
-            background-color: white;
+            background: var(--bg);
             padding: 10px;
             border-radius: 5px;
         }
@@ -60,24 +61,18 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 </head>
-<body>
+<body style="display: flex; flex-direction: column; height: 100vh;">
     <div id="map" style="width: 100%; height: 100vh;"></div>
     <div class="map-info" style="display: none;">
-        <h1 style="margin: 0;" id="map-title">Insta Map</h1>
-        <p id="map-description" style="display: none;">Create your own map with the API.</p>
+        <h1 style="margin: 0;" id="map-title"></h1>
+        <p id="map-description" style="display: none;"></p>
     </div>
     <div class="center-marker">×</div>
     <div class="key-message">
-        <div class="key-message-code">
-            <pre id="curl-command"></pre>
-            <button id="copyButton" style="margin-top: 5px;">Copy</button>
-            <button id="executeButton" style="margin-top: 5px;">Execute</button>
-        </div>
-        <small>Save this command to use the API. The API key will not be shown again.</small>
         <form id="configForm" method="post">
             <label for="email">Email <span style="color: red;">*</span></label>
             <input type="text" name="email" placeholder="Email">
-            <br>
+            <h6 style="margin: 0;">The API key will be sent to this email</h6>
             <label for="title">Title <span style="color: red;">*</span></label>
             <input type="text" name="title" placeholder="Title">
             <br>
@@ -91,7 +86,7 @@
             <label for="zoom">Zoom <span style="color: red;">*</span></label>
             <input type="number" name="zoom" placeholder="Zoom">
             <br>
-            <button type="submit">Create map</button>
+            <button type="submit" class="button">Create map</button>
         </form>
     </div>
     <script>
@@ -155,16 +150,6 @@
                     document.querySelector('.key-message').style.display = 'flex';
                     const lat = document.querySelector('[name="latitude"]').value || '0';
                     const lng = document.querySelector('[name="longitude"]').value || '0';
-
-                    const curlCommand = `curl -X POST \\
-    '${window.location.origin}/api/maps/${id}/markers' \\
-    -H 'Content-Type: application/json' \\
-    -H 'Authorization: Bearer ${data.api_key}' \\
-    -d '{
-        "latitude": ${lat},
-        "longitude": ${lng}
-    }'`;
-                    document.getElementById('curl-command').textContent = curlCommand;
                 }
 
                 data.markers.forEach(marker => {
@@ -205,47 +190,12 @@
             })
             .then(response => {
                 if (response.ok) {
-                    const curlCommand = document.getElementById('curl-command').textContent;
-                    navigator.clipboard.writeText(curlCommand)
-                        .then(() => {
-                            alert('¡Comando copiado al portapapeles!');
-                            window.location.reload();
-                        })
-                        .catch(err => {
-                            console.error('Error al copiar:', err);
-                            window.location.reload();
-                        });
-                } else {
-                    console.error('Error al guardar la configuración');
+                    window.location.reload();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
             });
-        });
-
-        document.getElementById('copyButton').addEventListener('click', () => {
-            const curlCommand = document.getElementById('curl-command').textContent;
-            navigator.clipboard.writeText(curlCommand)
-                .then(() => alert('¡Comando copiado al portapapeles!'))
-                .catch(err => console.error('Error al copiar:', err));
-        });
-
-        document.getElementById('executeButton').addEventListener('click', () => {
-            alert('Markers are not saved to the database until the map is created.');
-            const lat = document.querySelector('[name="latitude"]').value || '0';
-            const lng = document.querySelector('[name="longitude"]').value || '0';
-            L.marker([parseFloat(lat), parseFloat(lng)]).addTo(map);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch(`/api/maps/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.querySelector('[name="latitude"]').value = data.latitude;
-                    document.querySelector('[name="longitude"]').value = data.longitude;
-                    document.querySelector('[name="zoom"]').value = data.zoom;
-                });
         });
 
         document.querySelector('[name="zoom"]').addEventListener('change', (e) => {
@@ -266,22 +216,6 @@
             const center = map.getCenter();
             document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
             document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
-
-            if (document.getElementById('curl-command').textContent) {
-                const lat = center.lat.toFixed(6);
-                const lng = center.lng.toFixed(6);
-                const apiKey = document.getElementById('curl-command').textContent.match(/Bearer\s+([^\n']+)/)[1];
-
-                const curlCommand = `curl -X POST \\
-    '${window.location.origin}/api/maps/${id}/markers' \\
-    -H 'Content-Type: application/json' \\
-    -H 'Authorization: Bearer ${apiKey}' \\
-    -d '{
-        "latitude": ${lat},
-        "longitude": ${lng}
-    }'`;
-                document.getElementById('curl-command').textContent = curlCommand;
-            }
         });
     </script>
 </body>

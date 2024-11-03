@@ -107,7 +107,7 @@ export class ApiController {
       await this.mailerService.sendMail({
         to: body.email,
         subject: 'Instam.app: New map created',
-        text: `The map with url https://instam.app/${id} has been created. Enjoy!`,
+        text: `The map with url https://instam.app/${id} has been created. The API key is ${map.api_key}. Enjoy!`,
       });
     }
 
