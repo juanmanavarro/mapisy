@@ -101,6 +101,7 @@ export class ApiController {
     map.zoom = body.zoom;
     map.email = body.email;
     map.title = body.title;
+    map.description = body.description;
     await map.save();
 
     if (isNew && body.email) {
