@@ -181,8 +181,8 @@
                 description: formData.get('description')
             };
 
-            fetch(`/api/maps/${id}/config`, {
-                method: 'POST',
+            fetch(`/api/maps/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },

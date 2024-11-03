@@ -7,6 +7,7 @@ import { ApiController } from './api.controller';
 import { MapSchema } from './schemas/map.schema';
 import { Marker, MarkerSchema } from './schemas/marker.schema';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { MapController } from './api/map.controller';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       },
     }),
   ],
-  controllers: [AppController, ApiController],
+  controllers: [AppController, ApiController, MapController],
   providers: [
     AppGateway,
   ],
