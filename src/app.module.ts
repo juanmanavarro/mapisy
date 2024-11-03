@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppGateway } from './app.gateway';
-import { ApiController } from './api.controller';
 import { MapSchema } from './schemas/map.schema';
 import { Marker, MarkerSchema } from './schemas/marker.schema';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -39,7 +38,7 @@ import { MarkerController } from './api/marker.controller';
       },
     }),
   ],
-  controllers: [AppController, ApiController, MapController, MarkerController],
+  controllers: [AppController, MapController, MarkerController],
   providers: [
     AppGateway,
   ],
