@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Res, Headers } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Res, Headers, Delete } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AppGateway } from 'src/app.gateway';
@@ -69,12 +69,27 @@ export class MarkerController {
 
     const marker = await this.markerModel.create({ map_id: id, latitude, longitude });
 
-    this.appGateway.send('marker:created', {
-      map_id: id,
-      latitude,
-      longitude,
-    });
+    this.appGateway.send('marker:created', { marker });
 
     return res.status(201).json({ message: 'Marker created', marker });
+  }
+
+  // Comando curl para eliminar un marcador:
+  // curl -X DELETE http://localhost:3009/api/maps/{id}/markers/{markerId} -H "Authorization: Bearer {API_KEY}"
+  @Delete(':id/markers/:markerId')
+  async deleteMarker(@Param('id') id: string, @Param('markerId') markerId: string, @Headers('Authorization') auth: string, @Res() res: Response) {
+    if (!auth || !auth.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Invalid API key' });
+    }
+
+    const marker = await this.markerModel.findByIdAndDelete(markerId);
+
+    if (!marker) {
+      return res.status(404).json({ message: 'Marker not found' });
+    }
+
+    this.appGateway.send('marker:deleted', { marker });
+
+    return res.status(200).json({ message: 'Marker deleted', marker });
   }
 }

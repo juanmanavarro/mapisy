@@ -108,21 +108,24 @@
         function connectSocket() {
             socket = io();
 
-            socket.on('marker:created', function(marker) {
+            socket.on('marker:created', function({ marker }) {
                 if (marker.map_id !== id) return;
 
                 L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
-                    icon: marker.status === 'grave' ?
-                        L.icon({
-                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                            iconSize: [25, 41],
-                            iconAnchor: [12, 41],
-                            popupAnchor: [1, -34]
-                        }) : L.Icon.Default.prototype
-                })
-                .addTo(map);
+                    id: marker._id.toString()
+                }).addTo(map);
 
                 markers.push(marker);
+            });
+
+            socket.on('marker:deleted', function({ marker }) {
+                if (marker.map_id !== id) return;
+
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker && layer.options.id === marker._id.toString()) {
+                        map.removeLayer(layer);
+                    }
+                });
             });
 
             socket.on('connect_error', (error) => {
@@ -153,15 +156,11 @@
                 }
 
                 data.markers.forEach(marker => {
-                    L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
-                        icon: marker.status === 'grave' ?
-                            L.icon({
-                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                                iconSize: [25, 41],
-                                iconAnchor: [12, 41],
-                                popupAnchor: [1, -34]
-                            }) : L.Icon.Default.prototype
-                    })
+                    L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)])
+                        .bindPopup(marker._id)
+                        .on('click', function() {
+                            navigator.clipboard.writeText(marker._id.toString());
+                        })
                     .addTo(map);
                 });
 
