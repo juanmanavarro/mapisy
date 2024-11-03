@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MapMarker - Custom Map Markers API</title>
+    <title>Instam.app - Create maps effortlessly, mark spots instantly</title>
     <style>
         /* Reset and base styles */
         * {
@@ -120,6 +120,7 @@
         .hero-content {
             flex: 1;
             max-width: 50%;
+            padding-right: 5rem;
         }
 
         .hero h1 {
@@ -290,6 +291,11 @@
                 padding: 6rem 1rem 3rem;
             }
 
+            .hero-content {
+                max-width: 100%;
+                padding-right: 0;
+            }
+
             .hero h1 {
                 font-size: 2.5rem;
             }
@@ -338,14 +344,22 @@
     <header class="hero">
         <div class="hero-content">
             <h1>Create maps effortlessly, <br>mark spots instantly</h1>
-            <p>Easily create interactive maps and add custom markers with our API. Perfect for tracking locations, sharing points of interest, and visualizing data with minimal setup. Just create, customize, and share your map in minutes.</p>
+            <p>Easily create maps and add markers with our API. Perfect for tracking locations, sharing points of interest, and visualizing data with minimal setup. Just create, customize, and share your map in seconds.</p>
             <div class="hero-buttons">
-                <button class="primary-button">Try Demo</button>
+                <button id="try-demo" class="primary-button">Try Demo</button>
                 <button class="secondary-button">View Documentation</button>
             </div>
         </div>
-        <div class="hero-image">
-            <iframe src="/instam.app" width="100%"></iframe>
+        <div class="hero-image" style="display: flex; justify-content: center; align-items: center;flex-direction: column;">
+            <iframe src="/demo" width="100%"></iframe>
+            <div class="code-example" style="margin-top: 1rem;">
+                <pre><code>curl -X POST https://instam.app/api/maps/demo/markers \
+    -H "Authorization: Bearer 6a2men56hj4j9gpccm6qng" \
+    -H "Content-Type: application/json" \
+    -d "{
+        \"latitude\": 0,
+        \"longitude\": 0
+    }"</code></pre>
         </div>
     </header>
 
@@ -376,30 +390,16 @@
     </section>
 
     <section id="api" class="api-section">
-        <h2>2. Simple API Integration</h2>
+        <h2>Simple API</h2>
         <div class="code-example">
             <pre><code>// Create a new marker
 curl -X POST https://instam.app/api/maps/{id}/markers \
 -H "Authorization: Bearer {API_KEY}" \
 -H "Content-Type: application/json" \
--d '{
-    "latitude": 0,
-    "longitude": 0
-}'</code></pre>
-        </div>
-    </section>
-
-    <section id="api" class="api-section">
-        <h2>2. Simple API Integration</h2>
-        <div class="code-example">
-            <pre><code>// Create a new marker
-curl -X POST https://instam.app/api/maps/{id}/markers \
--H "Authorization: Bearer {API_KEY}" \
--H "Content-Type: application/json" \
--d '{
-    "latitude": 0,
-    "longitude": 0
-}'</code></pre>
+-d "{
+    \"latitude\": 0,
+    \"longitude\": 0
+}"</code></pre>
         </div>
     </section>
 
@@ -430,6 +430,27 @@ curl -X POST https://instam.app/api/maps/{id}/markers \
             <p>&copy; 2024 MapMarker. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('try-demo').addEventListener('click', () => {
+            // Comando curl a copiar
+            const curlCommand = `curl -X POST https://instam.app/api/maps/demo/markers \\
+    -H "Authorization: Bearer 6a2men56hj4j9gpccm6qng" \\
+    -H "Content-Type: application/json" \\
+    -d "{
+        \\"latitude\\": 0,
+        \\"longitude\\": 0
+    }"`;
+
+            navigator.clipboard.writeText(curlCommand)
+                .then(() => {
+                    alert('¡Comando copiado al portapapeles!');
+                })
+                .catch(err => {
+                    console.error('Error al copiar: ', err);
+                });
+        });
+    </script>
 </body>
 
 </html>
