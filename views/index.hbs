@@ -354,13 +354,8 @@
         <div class="hero-image" style="display: flex; justify-content: center; align-items: center;flex-direction: column;">
             <iframe src="/demo" width="100%"></iframe>
             <div class="code-example" style="margin-top: 1rem;">
-                <pre><code id="curl-command">curl -X POST {{ baseUrl }}/api/maps/demo/markers \
-    -H "Authorization: Bearer {{ map.api_key }}" \
-    -H "Content-Type: application/json" \
-    -d "{
-        \"latitude\": 0,
-        \"longitude\": 0
-    }"</code></pre>
+                <pre><code id="curl-command">{{ curlCommand }}</code></pre>
+            </div>
         </div>
     </header>
 

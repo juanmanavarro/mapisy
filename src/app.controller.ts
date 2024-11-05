@@ -16,9 +16,9 @@ export class AppController {
       id: "demo",
       latitude: 0,
       longitude: -0.175781,
-      zoom: 2,
+      zoom: 1,
       description: "",
-      email: "juanaco1.a@gmail.com",
+      email: "instamapp@juanmanavar.ro",
       title: 'Demo'
     };
 
@@ -27,14 +27,17 @@ export class AppController {
       map = await this.mapModel.create(demoMap);
     }
 
+    const latitude = (Math.random() * 180 - 90) + 0.1; // Genera una latitud aleatoria entre -90 y 90 con un margen
+    const longitude = (Math.random() * 360 - 180) + 0.1; // Genera una longitud aleatoria entre -180 y 180 con un margen
+
     return {
       title: 'InstaMapp',
       baseUrl: process.env.APP_URL,
       map,
-      curlCommand: `curl -X POST ${process.env.APP_URL}/api/maps/demo/markers \
-    -H "Authorization: Bearer ${map.api_key}"
-    -H "Content-Type: application/json"
-    -d '{"latitude": 0, "longitude": -0.175781}'`,
+      curlCommand: `curl -X POST ${process.env.APP_URL}/api/maps/demo/markers \\
+    -H "Authorization: Bearer ${map.api_key}" \\
+    -H "Content-Type: application/json" \\
+    -d "{\\"latitude\\": ${latitude}, \\"longitude\\": ${longitude}}"`,
     };
   }
 
