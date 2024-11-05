@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Render, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Render, Res, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
@@ -68,7 +68,16 @@ export class AppController {
   @Post(':id')
   async configMap(@Param('id') id: string, @Body() body: any, @Res() res: Response) {
     if (!body.latitude || !body.longitude || !body.zoom || !body.email || !body.title) {
-      return res.status(400).json({ message: 'Latitud, longitud, zoom y email son requeridos' });
+      return res.redirect(`/${id}?message=Email, Title, Latitude, Longitude and Zoom are required`);
+    }
+
+    const map = await this.mapModel.findOne({ id });
+    if (!map) {
+      throw new NotFoundException('Map not found');
+    }
+
+    if (map.email) {
+      return res.status(400).json({ message: 'Map already configured' });
     }
 
     await this.mapModel.updateOne({ id }, body);

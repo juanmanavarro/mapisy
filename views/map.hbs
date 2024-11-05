@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -197,6 +197,27 @@
                 document.getElementById('map-description').style.display = e.target.value ? 'block' : 'none';
                 document.getElementById('map-description').textContent = e.target.value;
             });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            if (message) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                toast.style.backgroundColor = '#a04848';
+                toast.style.color = 'var(--text)';
+                toast.style.padding = '10px';
+                toast.style.borderRadius = '5px';
+                toast.style.position = 'absolute';
+                toast.style.bottom = '10px';
+                toast.style.right = '10px';
+                toast.style.zIndex = '1000';
+                toast.style.width = '50%';
+                document.querySelector('.key-message').appendChild(toast);
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
         });
     </script>
 </body>
