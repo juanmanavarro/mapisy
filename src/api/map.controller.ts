@@ -13,6 +13,8 @@ export class MapController {
     private mailerService: MailerService,
   ) {}
 
+  // Comando curl para obtener un mapa:
+  // curl -X GET http://localhost:3009/api/maps/{id}
   @Get(':id')
   async getMap(@Param('id') id: string, @Res() res: Response) {
     const map = await this.mapModel.findOne({ id }).populate('markers');

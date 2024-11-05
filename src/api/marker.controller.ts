@@ -35,9 +35,9 @@ export class MarkerController {
     return await this.handleMarkerOperation(body, id, res);
   }
 
-  // Comando curl para obtener marcadores:
+  // Comando curl para crear marcador con GET:
   // curl -X GET http://localhost:3009/api/maps/{id}/markers?apiKey={API_KEY}
-  @Get(':id/markers')
+  // @Get(':id/markers')
   async getMarker(
     @Param('id') id: string,
     @Query() query: any,
