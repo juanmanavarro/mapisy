@@ -133,40 +133,37 @@
             });
         }
 
-        fetch(`/api/maps/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                map.setView([data.latitude, data.longitude], data.zoom);
+        const userMap = JSON.parse('{{{ map }}}');
 
-                if (data.title) {
-                    document.querySelector('.map-info').style.display = 'block';
-                    document.getElementById('map-title').textContent = data.title;
-                    document.getElementById('map-description').textContent = data.description;
-                    document.getElementById('map-description').style.display = data.description ? 'block' : 'none';
-                }
+        map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
 
-                if (!data.new) {
-                    document.querySelector('.center-marker').style.display = 'none';
-                }
+        if (userMap.title) {
+            document.querySelector('.map-info').style.display = 'block';
+            document.getElementById('map-title').textContent = userMap.title;
+            document.getElementById('map-description').textContent = userMap.description;
+            document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
+        }
 
-                if (!data.email) {
-                    document.querySelector('.key-message').style.display = 'flex';
-                    const lat = document.querySelector('[name="latitude"]').value || '0';
-                    const lng = document.querySelector('[name="longitude"]').value || '0';
-                }
+        if (!userMap.new) {
+            document.querySelector('.center-marker').style.display = 'none';
+        }
 
-                data.markers.forEach(marker => {
-                    L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)])
-                        .bindPopup(marker._id)
-                        .on('click', function() {
-                            navigator.clipboard.writeText(marker._id.toString());
-                        })
-                    .addTo(map);
-                });
+        if (!userMap.email) {
+            document.querySelector('.key-message').style.display = 'flex';
+            const lat = document.querySelector('[name="latitude"]').value || '0';
+            const lng = document.querySelector('[name="longitude"]').value || '0';
+        }
 
-                connectSocket();
-            })
-            .catch(error => console.error('Error:', error));
+        userMap.markers.forEach(marker => {
+            L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)])
+                .bindPopup(marker._id)
+                .on('click', function() {
+                    navigator.clipboard.writeText(marker._id.toString());
+                })
+            .addTo(map);
+        });
+
+        connectSocket();
 
         document.getElementById('configForm').addEventListener('submit', (e) => {
             e.preventDefault();

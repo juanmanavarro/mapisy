@@ -56,6 +56,11 @@ export class AppController {
       map = await this.mapModel.create({ id });
     }
 
-    return { title: 'InstaMapp' };
+    await map.populate('markers');
+
+    return {
+      title: 'InstaMapp',
+      map: JSON.stringify(map),
+    };
   }
 }
