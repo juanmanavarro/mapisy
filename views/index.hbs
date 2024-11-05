@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instam.app - Create maps effortlessly, mark spots instantly</title>
+    <title>{{ title }} - Create maps effortlessly, mark spots instantly</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         * {
@@ -338,13 +338,14 @@
             <li><a href="#features">Features</a></li>
             <li><a href="#api">API</a></li>
         </ul>
-        <button class="cta-button">Get Started</button>
+        <button class="cta-button" onclick="window.location.href='#get-started'">Get Started</button>
     </nav>
 
     <header class="hero">
         <div class="hero-content">
             <h1>Create maps effortlessly, <br>mark spots instantly</h1>
-            <p>Easily create maps and add markers with our API. Perfect for tracking locations, sharing points of interest, and visualizing data with minimal setup. Just create, customize, and share your map in seconds.</p>
+            <p style="margin-bottom: 1rem;">Easily create maps and add markers with our API. Perfect for tracking locations, sharing points of interest, and visualizing data with minimal setup.</p>
+            <p style="margin-bottom: 2rem;">Forget complicated APIs. Just create, customize, and share your map in seconds.</p>
             <div class="hero-buttons">
                 <button id="try-demo" class="primary-button">Try Demo</button>
                 <a href="#api" class="secondary-button">View API</a>
@@ -363,28 +364,28 @@
         </div>
     </header>
 
-    <section id="features" class="features">
-        <h2>Key Features</h2>
+    <section id="get-started" class="features">
+        <h2>Get Started</h2>
         <div class="feature-grid">
             <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>1. Create Your Map</h3>
+                <p>Simply add the path to our root URL, and you're ready to go. No complex setups, just instant maps.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>2. Customize</h3>
+                <p>Set the center, zoom level, title, and description of your map with ease. InstaMapp adapts to your specific needs.</p>
+            </div>
+            <div class="feature-card">
                 <div class="feature-icon">📍</div>
-                <h3>Custom Markers</h3>
-                <p>Create and customize map markers with ease using our simple API endpoints.</p>
+                <h3>3. Add Markers</h3>
+                <p>Use our streamlined API to add markers in seconds. Every point shows up on your map instantly, giving you live data visualization.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">🔄</div>
-                <h3>Real-time Updates</h3>
-                <p>Update marker positions and information in real-time with WebSocket support.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Mobile Ready</h3>
-                <p>Fully responsive design works seamlessly across all devices and screen sizes.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Secure API</h3>
-                <p>Enterprise-grade security with API key authentication and rate limiting.</p>
+                <div class="feature-icon">🔗</div>
+                <h3>4. Share and Explore</h3>
+                <p>Share your customized map with a simple link. Perfect for highlighting points of interest and showcasing data effortlessly.</p>
             </div>
         </div>
     </section>

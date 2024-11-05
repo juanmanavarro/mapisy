@@ -1,6 +1,4 @@
-import { Controller, Get, Param, Render, Res } from '@nestjs/common';
-import * as path from 'path';
-import { Response } from 'express';
+import { Controller, Get, Param, Render } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
@@ -14,7 +12,7 @@ export class AppController {
   @Get()
   @Render('index')
   async getIndex() {
-    return { title: 'Instam.app' };
+    return { title: 'InstaMapp' };
   }
 
   @Get(':id')
@@ -25,6 +23,6 @@ export class AppController {
       map = await this.mapModel.create({ id });
     }
 
-    return { title: 'Instam.app' };
+    return { title: 'InstaMapp' };
   }
 }
