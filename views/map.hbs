@@ -69,7 +69,7 @@
     </div>
     <div class="center-marker">×</div>
     <div class="key-message">
-        <form id="configForm" method="post">
+        <form id="configForm" method="post" action="/api/maps/{{ map }}">
             <label for="email">Email <span style="color: red;">*</span></label>
             <input type="text" name="email" placeholder="Email">
             <h6 style="margin: 0;">The API key will be sent to this email</h6>
@@ -90,139 +90,113 @@
         </form>
     </div>
     <script>
-        var map = L.map('map', {
-            center: [0, 0],
-            zoom: 1,
-        });
-
-        const id = window.location.pathname.split('/').pop();
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19
-        }).addTo(map);
-
-        let markers = [];
-        let socket;
-
-        function connectSocket() {
-            socket = io();
-
-            socket.on('marker:created', function({ marker }) {
-                if (marker.map_id !== id) return;
-
-                L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
-                    id: marker._id.toString()
-                }).addTo(map);
-
-                markers.push(marker);
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = L.map('map', {
+                center: [0, 0],
+                zoom: 1,
             });
 
-            socket.on('marker:deleted', function({ marker }) {
-                if (marker.map_id !== id) return;
+            const id = window.location.pathname.split('/').pop();
 
-                map.eachLayer(function(layer) {
-                    if (layer instanceof L.Marker && layer.options.id === marker._id.toString()) {
-                        map.removeLayer(layer);
-                    }
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            let markers = [];
+            let socket;
+
+            function connectSocket() {
+                socket = io();
+
+                socket.on('marker:created', function({ marker }) {
+                    if (marker.map_id !== id) return;
+
+                    L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
+                        id: marker._id.toString()
+                    }).addTo(map);
+
+                    markers.push(marker);
                 });
-            });
 
-            socket.on('connect_error', (error) => {
-                console.error('Error de conexión:', error);
-            });
-        }
+                socket.on('marker:deleted', function({ marker }) {
+                    if (marker.map_id !== id) return;
 
-        const userMap = JSON.parse('{{{ map }}}');
-
-        map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
-
-        if (userMap.title) {
-            document.querySelector('.map-info').style.display = 'block';
-            document.getElementById('map-title').textContent = userMap.title;
-            document.getElementById('map-description').textContent = userMap.description;
-            document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
-        }
-
-        if (!userMap.new) {
-            document.querySelector('.center-marker').style.display = 'none';
-        }
-
-        if (!userMap.email) {
-            document.querySelector('.key-message').style.display = 'flex';
-            const lat = document.querySelector('[name="latitude"]').value || '0';
-            const lng = document.querySelector('[name="longitude"]').value || '0';
-        }
-
-        userMap.markers.forEach(marker => {
-            L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)])
-                .bindPopup(marker._id)
-                .on('click', function() {
-                    navigator.clipboard.writeText(marker._id.toString());
-                })
-            .addTo(map);
-        });
-
-        connectSocket();
-
-        document.getElementById('configForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(document.getElementById('configForm'));
-            const data = {
-                latitude: formData.get('latitude'),
-                longitude: formData.get('longitude'),
-                zoom: formData.get('zoom'),
-                email: formData.get('email'),
-                title: formData.get('title'),
-                description: formData.get('description')
-            };
-
-            fetch(`/api/maps/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+                    map.eachLayer(function(layer) {
+                        if (layer instanceof L.Marker && layer.options.id === marker._id.toString()) {
+                            map.removeLayer(layer);
+                        }
+                    });
                 });
-        });
 
-        document.querySelector('[name="zoom"]').addEventListener('change', (e) => {
-            const newZoom = parseInt(e.target.value);
-            if (!isNaN(newZoom)) {
-                const limitedZoom = Math.min(Math.max(newZoom, 0), 19);
-                e.target.value = limitedZoom;
-                map.setZoom(limitedZoom);
+                socket.on('connect_error', (error) => {
+                    console.error('Error de conexión:', error);
+                });
             }
-        });
 
-        map.on('zoom', function() {
-            document.querySelector('[name="zoom"]').value = parseInt(map.getZoom().toFixed(0));
-        });
+            const userMap = JSON.parse('{{{ map }}}');
+            document.getElementById('configForm').setAttribute('action', `/${id}`);
 
-        map.on('moveend', function() {
-            const center = map.getCenter();
-            document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
-            document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
-        });
+            map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
 
-        document.querySelector('[name="title"]').addEventListener('input', (e) => {
-            document.querySelector('.map-info').style.display = e.target.value ? 'block' : 'none';
-            document.getElementById('map-title').textContent = e.target.value;
-            document.getElementById('map-description').textContent = document.querySelector('[name="description"]').value;
-        });
+            if (userMap.title) {
+                document.querySelector('.map-info').style.display = 'block';
+                document.getElementById('map-title').textContent = userMap.title;
+                document.getElementById('map-description').textContent = userMap.description;
+                document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
+            }
 
-        document.querySelector('[name="description"]').addEventListener('input', (e) => {
-            document.querySelector('.map-info').style.display = e.target.value ? 'block' : 'none';
-            document.getElementById('map-description').style.display = e.target.value ? 'block' : 'none';
-            document.getElementById('map-description').textContent = e.target.value;
+            if (!userMap.new) {
+                document.querySelector('.center-marker').style.display = 'none';
+            }
+
+            if (!userMap.email) {
+                document.querySelector('.key-message').style.display = 'flex';
+                const lat = document.querySelector('[name="latitude"]').value || '0';
+                const lng = document.querySelector('[name="longitude"]').value || '0';
+            }
+
+            userMap.markers.forEach(marker => {
+                L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)])
+                    .bindPopup(marker._id)
+                    .on('click', function() {
+                        navigator.clipboard.writeText(marker._id.toString());
+                    })
+                .addTo(map);
+            });
+
+            connectSocket();
+
+            document.querySelector('[name="zoom"]').addEventListener('change', (e) => {
+                const newZoom = parseInt(e.target.value);
+                if (!isNaN(newZoom)) {
+                    const limitedZoom = Math.min(Math.max(newZoom, 0), 19);
+                    e.target.value = limitedZoom;
+                    map.setZoom(limitedZoom);
+                }
+            });
+
+            map.on('zoom', function() {
+                document.querySelector('[name="zoom"]').value = parseInt(map.getZoom().toFixed(0));
+            });
+
+            map.on('moveend', function() {
+                const center = map.getCenter();
+                document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
+                document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
+            });
+
+            document.querySelector('[name="title"]').addEventListener('input', (e) => {
+                document.querySelector('.map-info').style.display = e.target.value ? 'block' : 'none';
+                document.getElementById('map-title').textContent = e.target.value;
+                document.getElementById('map-description').textContent = document.querySelector('[name="description"]').value;
+            });
+
+            document.querySelector('[name="description"]').addEventListener('input', (e) => {
+                document.querySelector('.map-info').style.display = e.target.value ? 'block' : 'none';
+                document.getElementById('map-description').style.display = e.target.value ? 'block' : 'none';
+                document.getElementById('map-description').textContent = e.target.value;
+            });
         });
     </script>
 </body>

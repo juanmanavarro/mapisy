@@ -13,20 +13,7 @@ export class MapController {
     private mailerService: MailerService,
   ) {}
 
-  // Comando curl para obtener un mapa:
-  // curl -X GET http://localhost:3009/api/maps/{id}
-  @Get(':id')
-  async getMap(@Param('id') id: string, @Res() res: Response) {
-    const map = await this.mapModel.findOne({ id }).populate('markers');
-
-    if (!map.new) {
-      map.api_key = undefined;
-    }
-
-    return res.json(map);
-  }
-
-  @Put(':id')
+  // @Put(':id')
   async config(@Param('id') id: string, @Body() body: any, @Res() res: Response) {
     if (!body.latitude || !body.longitude || !body.zoom || !body.email || !body.title) {
       return res.status(400).json({ message: 'Latitud, longitud, zoom y email son requeridos' });

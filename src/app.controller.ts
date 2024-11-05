@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Render } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Render, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
 import { Marker, MarkerDocument } from './schemas/marker.schema';
+import { Response } from 'express';
 
 @Controller()
 export class AppController {
@@ -62,5 +63,16 @@ export class AppController {
       title: 'InstaMapp',
       map: JSON.stringify(map),
     };
+  }
+
+  @Post(':id')
+  async configMap(@Param('id') id: string, @Body() body: any, @Res() res: Response) {
+    if (!body.latitude || !body.longitude || !body.zoom || !body.email || !body.title) {
+      return res.status(400).json({ message: 'Latitud, longitud, zoom y email son requeridos' });
+    }
+
+    await this.mapModel.updateOne({ id }, body);
+
+    return res.redirect(`/${id}`);
   }
 }
