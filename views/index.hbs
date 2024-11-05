@@ -354,8 +354,8 @@
         <div class="hero-image" style="display: flex; justify-content: center; align-items: center;flex-direction: column;">
             <iframe src="/demo" width="100%"></iframe>
             <div class="code-example" style="margin-top: 1rem;">
-                <pre><code>curl -X POST https://instam.app/api/maps/demo/markers \
-    -H "Authorization: Bearer 6a2men56hj4j9gpccm6qng" \
+                <pre><code id="curl-command">curl -X POST {{ baseUrl }}/api/maps/demo/markers \
+    -H "Authorization: Bearer {{ map.api_key }}" \
     -H "Content-Type: application/json" \
     -d "{
         \"latitude\": 0,
@@ -437,13 +437,7 @@
 
     <script>
         document.getElementById('try-demo').addEventListener('click', () => {
-            const curlCommand = `curl -X POST ${window.location.origin}/api/maps/demo/markers \\
-    -H "Authorization: Bearer 6a2men56hj4j9gpccm6qng" \\
-    -H "Content-Type: application/json" \\
-    -d "{
-        \\"latitude\\": 0,
-        \\"longitude\\": 0
-    }"`;
+            const curlCommand = document.getElementById('curl-command').innerText;
 
             navigator.clipboard.writeText(curlCommand)
                 .then(() => {
