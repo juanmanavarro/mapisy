@@ -13,31 +13,18 @@ export class AppController {
 
   @Get()
   @Render('index')
-  async getIndex(@Res() res: Response) {
+  async getIndex() {
     return { title: 'Instam.app' };
   }
 
   @Get(':id')
-  async getMap(@Param('id') id: string, @Res() res: Response) {
-    if (id.startsWith('favicon')) {
-      return res.sendFile(path.join(__dirname, '..', 'public', 'favicon.ico'));
-    }
-
+  @Render('map')
+  async getMap(@Param('id') id: string) {
     let map = await this.mapModel.findOne({ id });
     if (!map) {
       map = await this.mapModel.create({ id });
     }
 
-    return res.sendFile(path.join(__dirname, '..', 'public', 'map.html'));
+    return { title: 'Instam.app' };
   }
-
-  // @Get(':id/config')
-  // async configMap(@Param('id') id: string, @Res() res: Response) {
-  //   let map = await this.mapModel.findOne({ id });
-  //   if (!map) {
-  //     return res.status(404).sendFile(path.join(__dirname, '..', 'public', '404.html'));
-  //   }
-
-  //   return res.sendFile(path.join(__dirname, '..', 'public', 'config.html'));
-  // }
 }
