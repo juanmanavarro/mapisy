@@ -1,42 +1,61 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
-import * as path from 'path';
-import { Response } from 'express';
+import { Controller, Get, Param, Render } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
+import { Marker, MarkerDocument } from './schemas/marker.schema';
 
 @Controller()
 export class AppController {
   constructor(
     @InjectModel(Map.name) private mapModel: Model<MapDocument>,
+    @InjectModel(Marker.name) private markerModel: Model<MarkerDocument>,
   ) {}
 
   @Get()
-  async getIndex(@Res() res: Response) {
-    return res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  @Render('index')
+  async getIndex() {
+    const demoMap = {
+      id: "demo",
+      latitude: 0,
+      longitude: -0.175781,
+      zoom: 1,
+      description: "",
+      email: "instamapp@juanmanavar.ro",
+      title: 'Demo'
+    };
+
+    let map = await this.mapModel.findOne({ id: demoMap.id });
+    if (!map) {
+      map = await this.mapModel.create(demoMap);
+    }
+
+    await this.markerModel.deleteMany({ map_id: map.id });
+
+    const latitude = (Math.random() * 180 - 90) + 10;
+    const longitude = (Math.random() * 360 - 180) + 10;
+
+    return {
+      title: 'InstaMapp',
+      baseUrl: process.env.APP_URL,
+      map,
+      curlCommand: `curl -X POST ${process.env.APP_URL}/api/maps/demo/markers \\
+    -H "Authorization: Bearer ${map.api_key}" \\
+    -H "Content-Type: application/json" \\
+    -d "{
+      \\"latitude\\": ${latitude},
+      \\"longitude\\": ${longitude}
+    }"`,
+    };
   }
 
   @Get(':id')
-  async getMap(@Param('id') id: string, @Res() res: Response) {
-    if (id.startsWith('favicon')) {
-      return res.sendFile(path.join(__dirname, '..', 'public', 'favicon.jpg'));
-    }
-
+  @Render('map')
+  async getMap(@Param('id') id: string) {
     let map = await this.mapModel.findOne({ id });
     if (!map) {
       map = await this.mapModel.create({ id });
     }
 
-    return res.sendFile(path.join(__dirname, '..', 'public', 'map.html'));
+    return { title: 'InstaMapp' };
   }
-
-  // @Get(':id/config')
-  // async configMap(@Param('id') id: string, @Res() res: Response) {
-  //   let map = await this.mapModel.findOne({ id });
-  //   if (!map) {
-  //     return res.status(404).sendFile(path.join(__dirname, '..', 'public', '404.html'));
-  //   }
-
-  //   return res.sendFile(path.join(__dirname, '..', 'public', 'config.html'));
-  // }
 }

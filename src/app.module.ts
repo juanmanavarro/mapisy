@@ -8,9 +8,13 @@ import { Marker, MarkerSchema } from './schemas/marker.schema';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MapController } from './api/map.controller';
 import { MarkerController } from './api/marker.controller';
-
+import { ThrottlerModule } from '@nestjs/throttler';
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 10,
+    }]),
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
