@@ -78,15 +78,17 @@ export class MarkerController {
   // curl -X DELETE http://localhost:3009/api/maps/{id}/markers/{markerId} -H "Authorization: Bearer {API_KEY}"
   @Delete(':id/markers/:markerId')
   async deleteMarker(@Param('id') id: string, @Param('markerId') markerId: string, @Headers('Authorization') auth: string, @Res() res: Response) {
-    if (!auth || !auth.startsWith('Bearer ')) {
+    const marker = await this.markerModel.findById(markerId).populate('map');
+
+    if (!marker || marker.map_id !== id) {
+      return res.status(404).json({ message: 'Marker not found' });
+    }
+
+    if (!auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== marker.map.api_key) {
       return res.status(401).json({ message: 'Invalid API key' });
     }
 
-    const marker = await this.markerModel.findByIdAndDelete(markerId);
-
-    if (!marker) {
-      return res.status(404).json({ message: 'Marker not found' });
-    }
+    await marker.deleteOne();
 
     this.appGateway.send('marker:deleted', { marker });
 

@@ -20,7 +20,6 @@ export class MapController {
     }
 
     const map = await this.mapModel.findOne({ id });
-    const isNew = !map.email;
 
     map.latitude = body.latitude;
     map.longitude = body.longitude;
@@ -29,31 +28,6 @@ export class MapController {
     map.title = body.title;
     map.description = body.description;
     await map.save();
-
-    if (isNew && body.email) {
-      await this.mailerService.sendMail({
-        to: body.email,
-        subject: 'Instam.app: New map created',
-        text: `Hi,
-
-The map with url ${process.env.APP_URL}/${id} has been created. The API key is ${map.api_key}.
-
-You can create markers using the following curl command:
-
-curl -X POST ${process.env.APP_URL}/api/maps/${map.id}/markers \\
-  -H "Authorization: Bearer ${map.api_key}" \\
-  -H "Content-Type: application/json" \\
-  -d "{
-    \\"latitude\\": ${map.latitude},
-    \\"longitude\\": ${map.longitude}
-  }"
-
-More information in ${process.env.APP_URL}
-
-Enjoy!
-`,
-      });
-    }
 
     return res.status(200).json({ message: 'Map updated' });
   }
