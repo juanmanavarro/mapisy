@@ -12,7 +12,30 @@ export class AppController {
   @Get()
   @Render('index')
   async getIndex() {
-    return { title: 'InstaMapp' };
+    const demoMap = {
+      id: "demo",
+      latitude: 0,
+      longitude: -0.175781,
+      zoom: 2,
+      description: "",
+      email: "juanaco1.a@gmail.com",
+      title: 'Demo'
+    };
+
+    let map = await this.mapModel.findOne({ id: demoMap.id });
+    if (!map) {
+      map = await this.mapModel.create(demoMap);
+    }
+
+    return {
+      title: 'InstaMapp',
+      baseUrl: process.env.APP_URL,
+      map,
+      curlCommand: `curl -X POST ${process.env.APP_URL}/api/maps/demo/markers \
+    -H "Authorization: Bearer ${map.api_key}"
+    -H "Content-Type: application/json"
+    -d '{"latitude": 0, "longitude": -0.175781}'`,
+    };
   }
 
   @Get(':id')
