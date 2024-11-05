@@ -331,13 +331,13 @@
 
 <body>
     <nav class="navbar">
-        <div class="logo">
+        <div class="logo" onclick="window.location.href='#'" style="cursor: pointer;">
             <span>{{ title }}</span>
         </div>
-        <ul class="nav-links">
+        {{!-- <ul class="nav-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#api">API</a></li>
-        </ul>
+        </ul> --}}
         <button class="cta-button" onclick="window.location.href='#get-started'">Get Started</button>
     </nav>
 
@@ -409,7 +409,7 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-section">
+            {{!-- <div class="footer-section">
                 <h4>{{ title }}</h4>
                 <p>Create beautiful map experiences with our powerful API.</p>
             </div>
@@ -429,9 +429,9 @@
                     <li><a href="#blog">Blog</a></li>
                 </ul>
             </div>
-        </div>
+        </div> --}}
         <div class="footer-bottom">
-            <p>&copy; 2024 MapMarker. All rights reserved.</p>
+            <p>&copy; 2024 {{ title }}. All rights reserved.</p>
         </div>
     </footer>
 
@@ -447,7 +447,7 @@
 
             navigator.clipboard.writeText(curlCommand)
                 .then(() => {
-                    alert('¡Comando copiado al portapapeles!');
+                    alert('Command copied to clipboard!');
                 })
                 .catch(err => {
                     console.error('Error al copiar: ', err);
