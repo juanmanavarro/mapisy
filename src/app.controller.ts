@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Render, Res } from '@nestjs/common';
 import * as path from 'path';
 import { Response } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,8 +12,9 @@ export class AppController {
   ) {}
 
   @Get()
+  @Render('index')
   async getIndex(@Res() res: Response) {
-    return res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+    return { title: 'Instam.app' };
   }
 
   @Get(':id')
@@ -28,11 +29,6 @@ export class AppController {
     }
 
     return res.sendFile(path.join(__dirname, '..', 'public', 'map.html'));
-  }
-
-  @Get('*')
-  notFound(@Res() res: Response) {
-    return res.status(404).sendFile(path.join(__dirname, '..', 'public', '404.html'));
   }
 
   // @Get(':id/config')
