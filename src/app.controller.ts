@@ -2,11 +2,13 @@ import { Controller, Get, Param, Render } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
+import { Marker, MarkerDocument } from './schemas/marker.schema';
 
 @Controller()
 export class AppController {
   constructor(
     @InjectModel(Map.name) private mapModel: Model<MapDocument>,
+    @InjectModel(Marker.name) private markerModel: Model<MarkerDocument>,
   ) {}
 
   @Get()
@@ -27,8 +29,10 @@ export class AppController {
       map = await this.mapModel.create(demoMap);
     }
 
-    const latitude = (Math.random() * 180 - 90) + 0.1; // Genera una latitud aleatoria entre -90 y 90 con un margen
-    const longitude = (Math.random() * 360 - 180) + 0.1; // Genera una longitud aleatoria entre -180 y 180 con un margen
+    await this.markerModel.deleteMany({ map_id: map.id });
+
+    const latitude = (Math.random() * 180 - 90) + 10;
+    const longitude = (Math.random() * 360 - 180) + 10;
 
     return {
       title: 'InstaMapp',
@@ -37,7 +41,10 @@ export class AppController {
       curlCommand: `curl -X POST ${process.env.APP_URL}/api/maps/demo/markers \\
     -H "Authorization: Bearer ${map.api_key}" \\
     -H "Content-Type: application/json" \\
-    -d "{\\"latitude\\": ${latitude}, \\"longitude\\": ${longitude}}"`,
+    -d "{
+      \\"latitude\\": ${latitude},
+      \\"longitude\\": ${longitude}
+    }"`,
     };
   }
 
