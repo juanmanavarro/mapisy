@@ -388,16 +388,23 @@
     <section id="api" class="api-section">
         <h2>Simple API</h2>
         <div>
-            <h3 style="margin-bottom: 1rem;max-width: 800px;margin: 0 auto;">Create a marker</h3>
+            <h3 style="margin-bottom: 1rem;max-width: 800px;margin: 10px auto;font-size: 1.5rem;">Create a marker</h3>
             <div class="code-example">
-
-                <pre><code>curl -X POST https://instam.app/api/maps/{id}/markers \
-    -H "Authorization: Bearer {API_KEY}" \
+                <pre><code>curl -X POST {{baseUrl}}/api/maps/<span style="color: red;">{map_id}</span>/markers \
+    -H "Authorization: Bearer <span style="color: red;">{api_key}</span>" \
     -H "Content-Type: application/json" \
     -d "{
-        \"latitude\": 0,
-        \"longitude\": 0
+        \"latitude\": <span style="color: red;">{latitude}</span>,
+        \"longitude\": <span style="color: red;">{longitude}</span>
     }"</code></pre>
+            </div>
+        </div>
+        <div>
+            <h3 style="margin-bottom: 1rem;max-width: 800px;margin: 10px auto;font-size: 1.5rem;">Remove a marker</h3>
+            <div class="code-example">
+                <pre><code>curl -X DELETE {{baseUrl}}/api/maps/<span style="color: red;">{map_id}</span>/markers/<span style="color: red;">{marker_id}</span> \
+    -H "Authorization: Bearer <span style="color: red;">{api_key}</span>" \
+    -H "Content-Type: application/json"</code></pre>
             </div>
         </div>
     </section>
