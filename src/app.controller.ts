@@ -46,7 +46,8 @@ export class AppController {
     -H "Content-Type: application/json" \\
     -d "{
       \\"latitude\\": ${latitude},
-      \\"longitude\\": ${longitude}
+      \\"longitude\\": ${longitude},
+      \\"title\\": \\"Demo marker\\"
     }"`,
     };
   }

@@ -108,7 +108,14 @@
 
                     L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
                         id: marker._id.toString()
-                    }).addTo(map);
+                    })
+                    .bindPopup(marker.title || marker._id)
+                    .on('click', function(e) {
+                        this.openPopup(); // Muestra el popup al clicar
+                        navigator.clipboard.writeText(marker._id.toString());
+                    })
+                    .addTo(map)
+                    .openPopup(); // Abre el popup por defecto
 
                     markers.push(marker);
                 });
@@ -172,8 +179,9 @@
 
             userMap.markers.forEach(marker => {
                 L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)])
-                    .bindPopup(marker._id)
-                    .on('click', function() {
+                    .bindPopup(marker.title || marker._id)
+                    .on('click', function(e) {
+                        this.openPopup(); // Muestra el popup al clicar
                         navigator.clipboard.writeText(marker._id.toString());
                     })
                 .addTo(map);

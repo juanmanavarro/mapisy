@@ -24,6 +24,9 @@ export class Marker {
   @Prop({ required: true })
   longitude: string;
 
+  @Prop({ required: false })
+  title: string;
+
   map: MapDocument;
 }
 

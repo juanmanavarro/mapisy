@@ -67,7 +67,12 @@ export class MarkerController {
       return res.status(400).json({ message: 'Coordenadas fuera de rango' });
     }
 
-    const marker = await this.markerModel.create({ map_id: id, latitude, longitude });
+    const marker = await this.markerModel.create({
+      map_id: id,
+      latitude,
+      longitude,
+      title: data.title,
+    });
 
     this.appGateway.send('marker:created', { marker });
 
