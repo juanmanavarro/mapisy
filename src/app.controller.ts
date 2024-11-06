@@ -37,9 +37,15 @@ export class AppController {
     const latitude = (Math.random() * 180 - 90) + 10;
     const longitude = (Math.random() * 360 - 180) + 10;
 
+    let mapId;
+    do {
+      mapId = `${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 8)}`;
+    } while (await this.mapModel.countDocuments({ id: mapId }) > 0);
+
     return {
-      title: 'InstaMapp',
+      title: process.env.APP_TITLE,
       baseUrl: process.env.APP_URL,
+      mapId,
       map,
       curlCommand: `curl -X POST ${process.env.APP_URL}/api/maps/demo/markers \\
     -H "Authorization: Bearer ${map.api_key}" \\
@@ -63,7 +69,8 @@ export class AppController {
     await map.populate('markers');
 
     return {
-      title: 'InstaMapp',
+      title: process.env.APP_TITLE,
+      baseUrl: process.env.APP_URL,
       map: JSON.stringify(map),
     };
   }
