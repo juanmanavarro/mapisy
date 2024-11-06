@@ -67,6 +67,12 @@ export class MarkerController {
       return res.status(400).json({ message: 'Coordenadas fuera de rango' });
     }
 
+    const maxMarkers = 100;
+    const markersCount = await this.markerModel.countDocuments({ map_id: id });
+    if (markersCount >= maxMarkers && id !== 'demo') {
+      return res.status(400).json({ message: `You have reached the maximum number of markers for this map (${maxMarkers})` });
+    }
+
     const marker = await this.markerModel.create({
       map_id: id,
       latitude,
