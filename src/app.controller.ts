@@ -72,6 +72,7 @@ export class AppController {
       title: process.env.APP_TITLE,
       baseUrl: process.env.APP_URL,
       map: JSON.stringify(map),
+      mapObject: map,
     };
   }
 
