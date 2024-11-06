@@ -99,7 +99,9 @@
                 zoom: 1,
             });
 
+            // TODO: delete id
             const id = window.location.pathname.split('/').pop();
+
             function connectSocket() {
                 socket = io();
 
@@ -172,7 +174,10 @@
             }
 
             if (!userMap.email) {
-                document.querySelector('.key-message').style.display = 'flex';
+                const smallScreen = window.innerWidth < 768;
+                if (smallScreen) {
+                    window.location.href = '/';
+                }
                 const lat = document.querySelector('[name="latitude"]').value || '0';
                 const lng = document.querySelector('[name="longitude"]').value || '0';
             }

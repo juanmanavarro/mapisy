@@ -316,4 +316,9 @@ iframe {
         grid-template-columns: 1fr;
         text-align: center;
     }
+
+    .code-example {
+        width: 100%;
+        overflow-x: scroll;
+    }
 }
