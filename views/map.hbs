@@ -65,7 +65,10 @@
     <div id="map" style="width: 100%; height: 100vh;"></div>
     <div class="map-info" style="display: none;">
         <h1 style="margin: 0;font-size: 1.5rem;" id="map-title"></h1>
-        <p id="map-description" style="display: none; margin: 0;margin-top: 10px;"></p>
+        <p id="map-description" style="display: none; margin: 10px 0 0;"></p>
+        <div id="created-by" style="display: none; justify-content: flex-end;margin-top: 30px;">
+            <small>Made with <a href="https://instam.app">InstaMapp</a></small>
+        </div>
     </div>
     <div class="center-marker">×</div>
     <div class="key-message">
@@ -148,6 +151,7 @@
 
             if (!userMap.new) {
                 document.querySelector('.center-marker').style.display = 'none';
+                document.getElementById('created-by').style.display = 'flex';
             }
 
             if (!userMap.email) {
