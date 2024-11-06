@@ -214,7 +214,7 @@
         }
 
         .code-example {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             background-color: #2d3748;
             padding: 2rem;
@@ -388,7 +388,7 @@
     <section id="api" class="api-section">
         <h2>Simple API</h2>
         <div>
-            <h3 style="margin-bottom: 1rem;max-width: 800px;margin: 10px auto;font-size: 1.5rem;">Create a marker</h3>
+            <h3 style="margin-bottom: 1rem;max-width: 1000px;margin: 10px auto;font-size: 1.5rem;">Create a marker</h3>
             <div class="code-example">
                 <pre><code>curl -X POST {{baseUrl}}/api/maps/<span style="color: red;">{map_id}</span>/markers \
     -H "Authorization: Bearer <span style="color: red;">{api_key}</span>" \
@@ -400,7 +400,7 @@
             </div>
         </div>
         <div>
-            <h3 style="margin-bottom: 1rem;max-width: 800px;margin: 10px auto;font-size: 1.5rem;">Remove a marker</h3>
+            <h3 style="margin-bottom: 1rem;max-width: 1000px;margin: 10px auto;font-size: 1.5rem;">Remove a marker</h3>
             <div class="code-example">
                 <pre><code>curl -X DELETE {{baseUrl}}/api/maps/<span style="color: red;">{map_id}</span>/markers/<span style="color: red;">{marker_id}</span> \
     -H "Authorization: Bearer <span style="color: red;">{api_key}</span>" \
@@ -408,7 +408,7 @@
             </div>
         </div>
         <div>
-            <h3 style="margin-bottom: 1rem;max-width: 800px;margin: 50px auto;font-size: 1.5rem;">More functionality coming soon...</h3>
+            <h3 style="margin-bottom: 1rem;max-width: 1000px;margin: 50px auto;font-size: 1.5rem;">More functionality coming soon...</h3>
         </div>
     </section>
 
@@ -446,7 +446,7 @@
 
             navigator.clipboard.writeText(curlCommand)
                 .then(() => {
-                    alert('Command copied to clipboard!');
+                    alert('Command copied to clipboard!\n\nExecute it in your terminal to see the marker on the map.');
                 })
                 .catch(err => {
                     console.error('Error al copiar: ', err);
