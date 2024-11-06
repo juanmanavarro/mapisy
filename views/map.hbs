@@ -151,7 +151,9 @@
 
             if (!userMap.new) {
                 document.querySelector('.center-marker').style.display = 'none';
-                document.getElementById('created-by').style.display = 'flex';
+                if (userMap.title !== 'Demo') {
+                    document.getElementById('created-by').style.display = 'flex';
+                }
             }
 
             if (!userMap.email) {
