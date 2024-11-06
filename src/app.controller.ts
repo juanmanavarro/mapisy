@@ -73,6 +73,11 @@ export class AppController {
       return res.redirect(`/${id}?message=Email, Title, Latitude, Longitude and Zoom are required`);
     }
 
+    const mapsWithSameEmail = await this.mapModel.countDocuments({ email: body.email });
+    if (mapsWithSameEmail >= 3) {
+      return res.redirect(`/${id}?message=You have reached the maximum number of maps`);
+    }
+
     const map = await this.mapModel.findOne({ id });
     if (!map) {
       throw new NotFoundException('Map not found');
