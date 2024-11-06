@@ -100,15 +100,6 @@
             });
 
             const id = window.location.pathname.split('/').pop();
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                maxZoom: 19
-            }).addTo(map);
-
-            let markers = [];
-            let socket;
-
             function connectSocket() {
                 socket = io();
 
@@ -132,10 +123,27 @@
                     });
                 });
 
+                socket.on('map:updated', function({ map: currentMap }) {
+                    if (currentMap.id !== id) return;
+
+                    map.setView([currentMap.latitude, currentMap.longitude], currentMap.zoom);
+                    document.getElementById('map-title').textContent = currentMap.title;
+                    document.getElementById('map-description').textContent = currentMap.description;
+                    document.getElementById('map-description').style.display = currentMap.description ? 'block' : 'none';
+                });
+
                 socket.on('connect_error', (error) => {
                     console.error('Error de conexión:', error);
                 });
             }
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            let markers = [];
+            let socket;
 
             const userMap = JSON.parse('{{{ map }}}');
             document.getElementById('configForm').setAttribute('action', `/${id}`);

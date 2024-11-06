@@ -408,6 +408,21 @@
             </div>
         </div>
         <div>
+            <h3 style="margin-bottom: 1rem;max-width: 1000px;margin: 10px auto;font-size: 1.5rem;">Update map configuration</h3>
+            <div class="code-example">
+                <pre><code>curl -X PUT {{baseUrl}}/api/maps/<span style="color: red;">{map_id}</span> \
+    -H "Authorization: Bearer <span style="color: red;">{api_key}</span>" \
+    -H "Content-Type: application/json" \
+    -d "{
+        \"latitude\": <span style="color: red;">{latitude}</span>,
+        \"longitude\": <span style="color: red;">{longitude}</span>,
+        \"zoom\": <span style="color: red;">{zoom}</span>,
+        \"title\": <span style="color: red;">{title}</span>,
+        \"description\": <span style="color: red;">{description}</span>
+    }"</code></pre>
+            </div>
+        </div>
+        <div>
             <h3 style="margin-bottom: 1rem;max-width: 1000px;margin: 50px auto;font-size: 1.5rem;">More functionality coming soon...</h3>
         </div>
     </section>
