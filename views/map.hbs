@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - {{ mapObject.title }}</title>
+    <title>{{ title }} - {{#if mapObject.title}}{{ mapObject.title }}{{else}}New map{{/if}}</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <link rel="icon" type="image/jpg" href="/favicon.ico">

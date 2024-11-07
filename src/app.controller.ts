@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Render, Res, NotFoundException } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Render, Res, NotFoundException, Req } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MapDocument } from './schemas/map.schema';
@@ -59,8 +59,11 @@ export class AppController {
   }
 
   @Get(':id')
-  @Render('map')
-  async getMap(@Param('id') id: string) {
+  async getMap(@Param('id') id: string, @Req() req: Request, @Res() res: Response) {
+    if (!req.headers['user-agent'] || !req.headers['user-agent'].includes('Mozilla')) {
+      return res.status(400).json({ message: 'Error 400: La petición debe hacerse desde un navegador' });
+    }
+
     let map = await this.mapModel.findOne({ id });
     if (!map) {
       map = await this.mapModel.create({ id });
@@ -68,12 +71,12 @@ export class AppController {
 
     await map.populate('markers');
 
-    return {
+    return res.render('map', {
       title: process.env.APP_TITLE,
       baseUrl: process.env.APP_URL,
       map: JSON.stringify(map),
       mapObject: map,
-    };
+    });
   }
 
   @Post(':id')
