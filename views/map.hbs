@@ -18,7 +18,7 @@
             position: absolute;
             bottom: 50px;
             right: 10px;
-            display: none;
+            display: flex;
             flex-direction: column;
             gap: 5px;
             z-index: 1000;
@@ -168,6 +168,7 @@
 
             if (!userMap.new) {
                 document.querySelector('.center-marker').style.display = 'none';
+                document.querySelector('.key-message').style.display = 'none';
                 if (userMap.title !== 'Demo') {
                     document.getElementById('created-by').style.display = 'flex';
                 }
