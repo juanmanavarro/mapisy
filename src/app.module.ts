@@ -38,7 +38,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         },
       },
       defaults: {
-        from: `"Instam.app" <${process.env.EMAIL_USER}>`,
+        from: `"${process.env.APP_TITLE}" <${process.env.EMAIL_USER}>`,
       },
     }),
   ],

@@ -100,7 +100,7 @@ export class AppController {
 
     await this.mailerService.sendMail({
       to: body.email,
-      subject: 'Instam.app: New map created',
+      subject: `${process.env.APP_TITLE} - New map created`,
       text: `Hi,
 
 The map with url ${process.env.APP_URL}/${id} has been created. The API key is ${map.api_key}.
