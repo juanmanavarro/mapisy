@@ -66,7 +66,7 @@ export class AppController {
 
     let map = await this.mapModel.findOne({ id });
     if (!map) {
-      map = await this.mapModel.create({ id });
+      map = await this.mapModel.create({ id, reqHeaders: req.headers });
     }
 
     await map.populate('markers');

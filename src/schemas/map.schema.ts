@@ -36,6 +36,9 @@ export class Map {
   @Prop()
   api_key: string;
 
+  @Prop({ type: Object })
+  reqHeaders: Record<string, string>;
+
   markers: Marker[];
   new: boolean;
 }
