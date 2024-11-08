@@ -69,6 +69,8 @@ export class AppController {
       map = await this.mapModel.create({ id, reqHeaders: req.headers });
     }
 
+    map.reqHeaders = undefined;
+
     await map.populate('markers');
 
     return res.render('map', {
