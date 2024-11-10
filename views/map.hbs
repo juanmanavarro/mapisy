@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,20 +51,49 @@
 
         .card {
             background-color: var(--bs-secondary-bg-subtle);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
 
         /* Small screens */
         @media (max-width: 768px) {
             .bottom-right {
+                position: fixed;
                 width: 100%;
                 bottom: 0;
                 right: 0;
+                z-index: 1000;
+            }
+
+            .create-map-form {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+            }
+
+            #create-map-form-footer {
+                background-color: var(--bs-card-cap-bg);
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 10px;
+            }
+
+            #zoom-container {
+                margin-bottom: 50px !important;
             }
 
             .bottom-left {
                 width: 100%;
                 bottom: 0;
                 left: 0;
+                z-index: 999;
+            }
+
+            .map-info {
+                bottom: 0;
             }
 
             #create-map-form .card-body {
@@ -86,12 +115,12 @@
     <div class="bottom-right">
         <div id="create-map-form" class="card">
             <div class="card-header">
-                <h5 class="card-title m-0">Create map</h5>
-                <button class="btn btn-primary" style="float: right;display: none;">
-                    Create map
+                <h6 class="card-title m-0" style="display: none;">Configure map</h6>
+                <button class="btn btn-primary">
+                    Configure map
                 </button>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="display: none;max-height: 65vh;overflow-y: auto;">
                 <form id="configForm" method="post" action="/api/maps/{{ map }}">
                     <div class="mb-3">
                         <label for="email">Email <span style="color: red;">*</span></label>
@@ -111,11 +140,13 @@
                         <input class="form-control" type="text" name="latitude" placeholder="Latitude">
                         <input class="form-control" type="text" name="longitude" placeholder="Longitude">
                     </div>
-                    <div class="mb-3">
+                    <div id="zoom-container" class="mb-3">
                         <label for="zoom">Zoom <span style="color: red;">*</span></label>
                         <input class="form-control" type="number" name="zoom" placeholder="Zoom">
                     </div>
-                    <button type="submit" class="btn btn-primary">Create map</button>
+                    <div id="create-map-form-footer">
+                        <button type="submit" class="btn btn-primary">Configure map</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -131,40 +162,6 @@
             </div>
         </div>
     </div>
-    {{!-- <div class="map-info card" style="display: none;">
-            <h1 style="margin: 0;font-size: 1.5rem;" id="map-title"></h1>
-        <p id="map-description" style="display: none; margin: 10px 0 0;"></p>
-        <div id="created-by" style="display: none; justify-content: flex-end;margin-top: 30px;">
-            <small>Made with <a href="{{baseUrl}}">{{title}}</a></small>
-        </div>
-    </div>
-    <div class="center-marker">×</div>
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">Create map</h5>
-        </div>
-        <div class="card-body">
-            <form id="configForm" method="post" action="/api/maps/{{ map }}">
-                <label for="email">Email <span style="color: red;">*</span></label>
-            <input type="text" name="email" placeholder="Email">
-            <h6 style="margin: 0;">The API key will be sent to this email</h6>
-            <label for="title">Title <span style="color: red;">*</span></label>
-            <input type="text" name="title" placeholder="Title">
-            <br>
-            <label for="description">Description</label>
-            <textarea name="description" placeholder="Description"></textarea>
-            <br>
-            <label for="latitude">Center <span style="color: red;">*</span></label>
-            <input type="text" name="latitude" placeholder="Latitude">
-            <input type="text" name="longitude" placeholder="Longitude">
-            <br>
-            <label for="zoom">Zoom <span style="color: red;">*</span></label>
-            <input type="number" name="zoom" placeholder="Zoom">
-            <br>
-            <button type="submit" class="button">Create map</button>
-            </form>
-        </div>
-    </div> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = L.map('map', {
@@ -182,12 +179,20 @@
                 if (window.innerWidth < 768) {
                     document.querySelector('.card-header').addEventListener('click', () => {
                         const cardBody = document.querySelector('.card-body');
-                        cardBody.style.display = cardBody.style.display === 'none' ? 'block' : 'none';
-                        document.querySelector('.btn').style.display = cardBody.style.display === 'none' ? 'block' : 'none';
-                        document.querySelector('.card-title').style.display = cardBody.style.display === 'none' ? 'none' : 'block';
+                        if ( cardBody.style.display === 'none' ) {
+                            cardBody.style.display = 'block';
+                            document.querySelector('.btn').style.display = 'none';
+                            document.querySelector('.card-title').style.display = 'block';
+                        } else {
+                            cardBody.style.display = 'none';
+                            document.querySelector('.btn').style.display = 'block';
+                            document.querySelector('.card-title').style.display = 'none';
+                        }
                     });
                 } else {
                     document.querySelector('.card-body').style.display = 'block';
+                    document.querySelector('#create-map-form .card-title').style.display = 'block';
+                    document.querySelector('#create-map-form .btn').style.display = 'none';
                 }
             }
 
@@ -249,13 +254,6 @@
 
             map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
 
-            if (userMap.title) {
-                //document.querySelector('.map-info').style.display = 'block';
-                //document.getElementById('map-title').textContent = userMap.title;
-                //document.getElementById('map-description').textContent = userMap.description;
-                //document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
-            }
-
             if (!userMap.new) {
                 document.querySelector('.center-marker').style.display = 'none';
                 document.getElementById('create-map-form').style.display = 'none';
@@ -270,10 +268,6 @@
             }
 
             if (!userMap.email) {
-                const smallScreen = window.innerWidth < 768;
-                if (smallScreen) {
-                    //window.location.href = '/';
-                }
                 const lat = document.querySelector('[name="latitude"]').value || '0';
                 const lng = document.querySelector('[name="longitude"]').value || '0';
             }
