@@ -21,26 +21,6 @@
             font-style: normal;
         }
 
-        .key-message {
-            position: absolute;
-            bottom: 50px;
-            right: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 1000;
-            background: var(--bg);
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .key-message-code {
-            background-color: black;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
         .center-marker {
             position: absolute;
             top: 50%;
@@ -53,18 +33,18 @@
             pointer-events: none;
         }
 
-        .map-info {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            z-index: 1000;
-            display: none;
-        }
-
         .bottom-right {
             position: absolute;
             bottom: 20px;
             right: 10px;
+            z-index: 1000;
+            width: 25%;
+        }
+
+        .bottom-left {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
             z-index: 1000;
             width: 25%;
         }
@@ -79,6 +59,12 @@
                 width: 100%;
                 bottom: 0;
                 right: 0;
+            }
+
+            .bottom-left {
+                width: 100%;
+                bottom: 0;
+                left: 0;
             }
 
             #create-map-form .card-body {
@@ -96,6 +82,7 @@
 </head>
 <body style="display: flex; flex-direction: column; height: 100vh;">
     <div id="map" style="width: 100%; height: 100vh;"></div>
+    <div class="center-marker">×</div>
     <div class="bottom-right">
         <div id="create-map-form" class="card">
             <div class="card-header">
@@ -133,7 +120,18 @@
             </div>
         </div>
     </div>
-        {{!-- <div class="map-info card" style="display: none;">
+    <div class="bottom-left">
+        <div class="map-info card" style="display: none;">
+            <div class="card-body">
+                <h1 style="margin: 0;font-size: 1.5rem;" id="map-title"></h1>
+                <p id="map-description" style="display: none; margin: 10px 0 0;"></p>
+                <div id="created-by" style="display: none; justify-content: flex-end;margin-top: 30px;">
+                    <small>Made with <a href="{{baseUrl}}">{{title}}</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{!-- <div class="map-info card" style="display: none;">
             <h1 style="margin: 0;font-size: 1.5rem;" id="map-title"></h1>
         <p id="map-description" style="display: none; margin: 10px 0 0;"></p>
         <div id="created-by" style="display: none; justify-content: flex-end;margin-top: 30px;">
@@ -252,15 +250,20 @@
             map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
 
             if (userMap.title) {
-                document.querySelector('.map-info').style.display = 'block';
-                document.getElementById('map-title').textContent = userMap.title;
-                document.getElementById('map-description').textContent = userMap.description;
-                document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
+                //document.querySelector('.map-info').style.display = 'block';
+                //document.getElementById('map-title').textContent = userMap.title;
+                //document.getElementById('map-description').textContent = userMap.description;
+                //document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
             }
 
             if (!userMap.new) {
                 document.querySelector('.center-marker').style.display = 'none';
-                document.querySelector('.key-message').style.display = 'none';
+                document.getElementById('create-map-form').style.display = 'none';
+
+                document.querySelector('.map-info').style.display = 'block';
+                document.getElementById('map-title').textContent = userMap.title;
+                document.getElementById('map-description').textContent = userMap.description;
+                document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
                 if (userMap.title !== 'Demo') {
                     document.getElementById('created-by').style.display = 'flex';
                 }
@@ -269,7 +272,7 @@
             if (!userMap.email) {
                 const smallScreen = window.innerWidth < 768;
                 if (smallScreen) {
-                    window.location.href = '/';
+                    //window.location.href = '/';
                 }
                 const lat = document.querySelector('[name="latitude"]').value || '0';
                 const lng = document.querySelector('[name="longitude"]').value || '0';
