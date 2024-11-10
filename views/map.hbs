@@ -189,6 +189,12 @@
                             document.querySelector('.card-title').style.display = 'none';
                         }
                     });
+                    // hide card body on map click
+                    map.on('click', () => {
+                        document.querySelector('.card-body').style.display = 'none';
+                        document.querySelector('.btn').style.display = 'block';
+                        document.querySelector('.card-title').style.display = 'none';
+                    });
                 } else {
                     document.querySelector('.card-body').style.display = 'block';
                     document.querySelector('#create-map-form .card-title').style.display = 'block';
