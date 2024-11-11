@@ -112,10 +112,20 @@ class MapConfig extends LitElement {
         <label for="zoom">Zoom <span style="color: red;">*</span></label>
         <input @change=${this._handleInput} class="form-control" type="number" name="zoom" placeholder="Zoom" .value=${this.zoom}>
       </div>
+      <div class="d-grid ${this.isMobile ? 'd-none' : ''}">
+        <button
+          @click=${this._handleSubmit}
+          id="configure-map-button"
+          type="submit"
+          class="btn btn-primary"
+        >
+          Configure map
+        </button>
+      </div>
     </form>
   </div>
 </div>
-<div class="d-grid ${this.isMobile ? 'fixed-bottom p-3' : ''}">
+<div class="d-grid ${this.isMobile ? 'fixed-bottom p-3' : 'd-none'}">
   <button
     @click=${this._handleSubmit}
     id="configure-map-button"
