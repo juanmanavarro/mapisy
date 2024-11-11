@@ -161,7 +161,7 @@
 
     <div class="bottom-left">
         {{#if map.email}}
-            <div class="map-info card">
+            <div id="map-info" class="map-info card">
                 <div class="card-body">
                     <h1 style="margin: 0;font-size: 1.5rem;" id="map-title">{{{ map.title }}}</h1>
                     {{#if map.description}}
@@ -194,7 +194,7 @@
             // if screen is small, make create-map-form hidable clicking and sliding de header
             function toggleCardBody() {
                 if (window.innerWidth < 768) {
-                    document.querySelector('.card-header')?.addEventListener('click', () => {
+                    document.querySelector('#create-map-form .card-header')?.addEventListener('click', () => {
                         const cardBody = document.querySelector('.card-body');
                         if ( cardBody.style.display === 'none' ) {
                             cardBody.style.display = 'block';
@@ -230,8 +230,8 @@
                 }
             }
 
-            toggleCardBody();
-            window.addEventListener('resize', toggleCardBody);
+            //toggleCardBody();
+            //window.addEventListener('resize', toggleCardBody);
 
             const userMap = {{{ mapObject }}};
 
@@ -286,12 +286,6 @@
             //document.getElementById('configForm').setAttribute('action', `/${userMap.id}`);
 
             map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
-
-            if (!userMap.new) {
-                if (userMap.title !== 'Demo') {
-                    document.getElementById('created-by').style.display = 'flex';
-                }
-            }
 
             if (!userMap.email) {
                 //const lat = document.querySelector('[name="latitude"]').value || '0';
@@ -361,6 +355,7 @@
                     toast.remove();
                 }, 3000);
             }
+
         });
     </script>
 </body>
