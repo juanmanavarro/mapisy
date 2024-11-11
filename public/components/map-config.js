@@ -1,4 +1,4 @@
-import {LitElement, html, css} from 'https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js';
+import {LitElement, html, css, unsafeCSS} from 'https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js';
 
 class MapConfig extends LitElement {
   static get styles() {
@@ -7,7 +7,11 @@ class MapConfig extends LitElement {
     rule.cssText).join('\n')])
     return [
       globalStyle,
-      css`
+      unsafeCSS`
+      .card {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+      }
       `
     ];
   }
