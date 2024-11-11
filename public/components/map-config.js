@@ -33,15 +33,35 @@ class MapConfig extends LitElement {
     isMobile: {
       type: Boolean,
     },
+    validEmail: {
+      type: Boolean,
+    },
+    validTitle: {
+      type: Boolean,
+    },
+    validLatitude: {
+      type: Boolean,
+    },
+    validLongitude: {
+      type: Boolean,
+    },
+    validZoom: {
+      type: Boolean,
+    },
   };
 
   constructor() {
     super();
-    this.latitude = 0;
-    this.longitude = 0;
-    this.zoom = 0;
+    this.latitude = '0';
+    this.longitude = '0';
+    this.zoom = '0';
     this.isMobile = false;
     this.isOpen = true;
+    this.validEmail = true;
+    this.validTitle = true;
+    this.validLatitude = true;
+    this.validLongitude = true;
+    this.validZoom = true;
   }
 
   connectedCallback() {
@@ -60,9 +80,9 @@ class MapConfig extends LitElement {
       this.isOpen = false;
     }
 
-    this.latitude = event.detail.lat ? event.detail.lat.toFixed(6) : this.latitude;
-    this.longitude = event.detail.lng ? event.detail.lng.toFixed(6) : this.longitude;
-    this.zoom = event.detail.zoom ? event.detail.zoom : this.zoom;
+    this.latitude = event.detail.lat ? event.detail.lat.toFixed(6).toString() : this.latitude;
+    this.longitude = event.detail.lng ? event.detail.lng.toFixed(6).toString() : this.longitude;
+    this.zoom = event.detail.zoom ? event.detail.zoom.toString() : this.zoom;
   }
 
   _handleInput( evt ) {
@@ -75,6 +95,35 @@ class MapConfig extends LitElement {
 
     if (!this.isOpen) {
       this.isOpen = true;
+      return;
+    }
+
+    this.validEmail = v8n()
+      .string()
+      .pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+      .test(this.email);
+
+    this.validTitle = v8n()
+      .string()
+      .minLength(1)
+      .test(this.title);
+
+    this.validLatitude = v8n()
+      .string()
+      .minLength(1)
+      .test(this.latitude);
+
+    this.validLongitude = v8n()
+      .string()
+      .minLength(1)
+      .test(this.longitude);
+
+    this.validZoom = v8n()
+      .string()
+      .minLength(1)
+      .test(this.zoom);
+
+    if ( !this.validEmail || !this.validTitle || !this.validLatitude || !this.validLongitude || !this.validZoom ) {
       return;
     }
 
@@ -95,12 +144,12 @@ class MapConfig extends LitElement {
     <form id="configForm" method="post">
       <div class="mb-3">
         <label for="email">Email <span style="color: red;">*</span></label>
-        <input @change=${this._handleInput} class="form-control" type="text" name="email" placeholder="Email">
+        <input @change=${this._handleInput} class="form-control ${!this.validEmail ? 'is-invalid' : ''}" type="text" name="email" placeholder="Email">
         <div id="emailHelp" class="form-text">The API key will be sent to this email</div>
       </div>
       <div class="mb-3">
         <label for="title">Title <span style="color: red;">*</span></label>
-        <input @change=${this._handleInput} class="form-control" type="text" name="title" placeholder="Title">
+        <input @change=${this._handleInput} class="form-control ${!this.validTitle ? 'is-invalid' : ''}" type="text" name="title" placeholder="Title">
       </div>
       <div class="mb-3">
         <label for="description">Description</label>
@@ -108,12 +157,12 @@ class MapConfig extends LitElement {
       </div>
       <div class="mb-3">
         <label for="latitude">Center <span style="color: red;">*</span></label>
-        <input @change=${this._handleInput} class="form-control" type="text" name="latitude" placeholder="Latitude" .value=${this.latitude}>
-        <input @change=${this._handleInput} class="form-control" type="text" name="longitude" placeholder="Longitude" .value=${this.longitude}>
+        <input @change=${this._handleInput} class="form-control ${!this.validLatitude ? 'is-invalid' : ''}" type="text" name="latitude" placeholder="Latitude" .value=${this.latitude}>
+        <input @change=${this._handleInput} class="form-control ${!this.validLongitude ? 'is-invalid' : ''}" type="text" name="longitude" placeholder="Longitude" .value=${this.longitude}>
       </div>
       <div id="zoom-container" class="mb-3">
         <label for="zoom">Zoom <span style="color: red;">*</span></label>
-        <input @change=${this._handleInput} class="form-control" type="number" name="zoom" placeholder="Zoom" .value=${this.zoom}>
+        <input @change=${this._handleInput} class="form-control ${!this.validZoom ? 'is-invalid' : ''}" type="number" name="zoom" placeholder="Zoom" .value=${this.zoom}>
       </div>
       <div class="d-grid ${this.isMobile ? 'd-none' : ''}">
         <button
