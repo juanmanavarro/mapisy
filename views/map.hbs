@@ -206,15 +206,7 @@
             let markers = [];
             let socket;
 
-
-            //document.getElementById('configForm').setAttribute('action', `/${userMap.id}`);
-
             map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
-
-            if (!userMap.email) {
-                //const lat = document.querySelector('[name="latitude"]').value || '0';
-                //const lng = document.querySelector('[name="longitude"]').value || '0';
-            }
 
             userMap.markers.forEach(marker => {
                 L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)])
@@ -228,15 +220,6 @@
 
             connectSocket();
 
-            document.querySelector('[name="zoom"]')?.addEventListener('change', (e) => {
-                const newZoom = parseInt(e.target.value);
-                if (!isNaN(newZoom)) {
-                    const limitedZoom = Math.min(Math.max(newZoom, 0), 19);
-                    e.target.value = limitedZoom;
-                    map.setZoom(limitedZoom);
-                }
-            });
-
             map.on('zoom', function() {
                 const zoom = parseInt(map.getZoom().toFixed(0));
                 const event = new CustomEvent('mapUpdated', { detail: { zoom } });
@@ -247,14 +230,12 @@
                 const center = map.getCenter();
                 const event = new CustomEvent('mapUpdated', { detail: center });
                 window.dispatchEvent(event);
-
-                //document.querySelector('[name="latitude"]').value = center.lat.toFixed(6);
-                //document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
             });
 
-
-
-
+            map.on('click', function() {
+                const event = new CustomEvent('mapUpdated', { detail: {}});
+                window.dispatchEvent(event);
+            });
 
             const urlParams = new URLSearchParams(window.location.search);
             const message = urlParams.get('message');

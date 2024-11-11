@@ -23,6 +23,9 @@ class MapConfig extends LitElement {
     zoom: {
       type: Number,
     },
+    isOpen: {
+      type: Boolean,
+    },
   };
 
   constructor() {
@@ -30,6 +33,7 @@ class MapConfig extends LitElement {
     this.latitude = 0;
     this.longitude = 0;
     this.zoom = 0;
+    this.isOpen = false;
   }
 
   connectedCallback() {
@@ -45,10 +49,12 @@ class MapConfig extends LitElement {
     this.latitude = event.detail.lat ? event.detail.lat.toFixed(6) : this.latitude;
     this.longitude = event.detail.lng ? event.detail.lng.toFixed(6) : this.longitude;
     this.zoom = event.detail.zoom ? event.detail.zoom : this.zoom;
+    this.isOpen = false;
   }
 
   render() {
     return html`
+    ${this.isOpen ? html`
 <div
   id="create-map-form"
   class="card position-relative ${this.isMobile() ? 'rounded-top' : ''}"
@@ -81,17 +87,19 @@ class MapConfig extends LitElement {
         <label for="zoom">Zoom <span style="color: red;">*</span></label>
         <input class="form-control" type="number" name="zoom" placeholder="Zoom" .value=${this.zoom}>
       </div>
-      <div class="d-grid ${this.isMobile() ? 'fixed-bottom p-3' : ''}">
-        <button
-          id="configure-map-button"
-          type="submit"
-          class="btn btn-primary"
-        >Configure map</button>
-      </div>
     </form>
   </div>
 </div>
-`;
+      ` : ''}
+      <div class="d-grid ${this.isMobile() ? 'fixed-bottom p-3' : ''}">
+        <button
+          @click=${() => this.isOpen = true}
+          id="configure-map-button"
+          type="submit"
+          class="btn btn-primary"
+          >Configure map</button>
+        </div>
+    `;
   }
 }
 customElements.define('map-config', MapConfig);
