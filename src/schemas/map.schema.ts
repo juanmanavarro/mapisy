@@ -10,6 +10,9 @@ export type MapDocument = Map & Document;
   toJSON: {
     virtuals: true,
   },
+  toObject: {
+    virtuals: true,
+  },
 })
 export class Map {
   @Prop({ required: true, unique: true })

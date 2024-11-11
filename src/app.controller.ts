@@ -22,8 +22,8 @@ export class AppController {
       latitude: 0,
       longitude: -0.175781,
       zoom: 1,
-      description: "",
-      email: "instamapp@juanmanavar.ro",
+      description: "Mapisy demo map",
+      email: "hello@mapisy.com",
       title: 'Demo'
     };
 
@@ -70,14 +70,15 @@ export class AppController {
     }
 
     map.reqHeaders = undefined;
+    map.api_key = undefined;
 
     await map.populate('markers');
 
     return res.render('map', {
       title: process.env.APP_TITLE,
       baseUrl: process.env.APP_URL,
-      map: JSON.stringify(map),
-      mapObject: map,
+      map,
+      mapObject: JSON.stringify(map.toObject()),
     });
   }
 
@@ -88,7 +89,7 @@ export class AppController {
     }
 
     const mapsWithSameEmail = await this.mapModel.countDocuments({ email: body.email });
-    if (mapsWithSameEmail >= 3) {
+    if (mapsWithSameEmail >= Number(process.env.MAX_MAPS || 3)) {
       return res.redirect(`/${id}?message=You have reached the maximum number of maps`);
     }
 

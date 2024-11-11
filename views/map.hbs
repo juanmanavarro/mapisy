@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpg" href="/favicon.ico">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script defer data-domain="mapisy.com" src="https://analytics.juanma.app/js/script.js"></script>
     <style>
         body {
             margin: 0;
@@ -105,64 +108,74 @@
             }
         }
     </style>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-    <script defer data-domain="mapisy.com" src="https://analytics.juanma.app/js/script.js"></script>
 </head>
 <body style="display: flex; flex-direction: column; height: 100vh;">
+
     <div id="map" style="width: 100%; height: 100vh;"></div>
-    <div class="center-marker">×</div>
+
+    {{#unless map.email}}
+        <div class="center-marker">×</div>
+    {{/unless}}
+
     <div class="bottom-right">
-        <div id="create-map-form" class="card">
-            <div class="card-header">
-                <h6 class="card-title m-0" style="display: none;">Configure map</h6>
-                <button class="btn btn-primary">
-                    Configure map
-                </button>
-            </div>
-            <div class="card-body" style="display: none;max-height: 65vh;overflow-y: auto;">
-                <form id="configForm" method="post" action="/api/maps/{{ map }}">
-                    <div class="mb-3">
-                        <label for="email">Email <span style="color: red;">*</span></label>
-                        <input class="form-control" type="text" name="email" placeholder="Email">
-                        <div id="emailHelp" class="form-text">The API key will be sent to this email</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="title">Title <span style="color: red;">*</span></label>
-                        <input class="form-control" type="text" name="title" placeholder="Title">
-                    </div>
-                    <div class="mb-3">
-                        <label for="description">Description</label>
-                        <textarea class="form-control" name="description" placeholder="Description"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="latitude">Center <span style="color: red;">*</span></label>
-                        <input class="form-control" type="text" name="latitude" placeholder="Latitude">
-                        <input class="form-control" type="text" name="longitude" placeholder="Longitude">
-                    </div>
-                    <div id="zoom-container" class="mb-3">
-                        <label for="zoom">Zoom <span style="color: red;">*</span></label>
-                        <input class="form-control" type="number" name="zoom" placeholder="Zoom">
-                    </div>
-                    <div id="create-map-form-footer">
-                        <button type="submit" class="btn btn-primary">Configure map</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="bottom-left">
-        <div class="map-info card" style="display: none;">
-            <div class="card-body">
-                <h1 style="margin: 0;font-size: 1.5rem;" id="map-title"></h1>
-                <p id="map-description" style="display: none; margin: 10px 0 0;"></p>
-                <div id="created-by" style="display: none; justify-content: flex-end;margin-top: 30px;">
-                    <small>Made with <a href="{{baseUrl}}">{{title}}</a></small>
+        {{#unless map.email}}
+            <div id="create-map-form" class="card">
+                <div class="card-header">
+                    <h6 class="card-title m-0" style="display: none;">Configure map</h6>
+                    <button class="btn btn-primary">
+                        Configure map
+                    </button>
+                </div>
+                <div class="card-body" style="display: none;max-height: 65vh;overflow-y: auto;">
+                    <form id="configForm" method="post">
+                        <div class="mb-3">
+                            <label for="email">Email <span style="color: red;">*</span></label>
+                            <input class="form-control" type="text" name="email" placeholder="Email">
+                            <div id="emailHelp" class="form-text">The API key will be sent to this email</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="title">Title <span style="color: red;">*</span></label>
+                            <input class="form-control" type="text" name="title" placeholder="Title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" name="description" placeholder="Description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="latitude">Center <span style="color: red;">*</span></label>
+                            <input class="form-control" type="text" name="latitude" placeholder="Latitude">
+                            <input class="form-control" type="text" name="longitude" placeholder="Longitude">
+                        </div>
+                        <div id="zoom-container" class="mb-3">
+                            <label for="zoom">Zoom <span style="color: red;">*</span></label>
+                            <input class="form-control" type="number" name="zoom" placeholder="Zoom">
+                        </div>
+                        <div id="create-map-form-footer">
+                            <button id="configure-map-button" type="submit" class="btn btn-primary">Configure map</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
+        {{/unless}}
     </div>
-    <script>
+
+    <div class="bottom-left">
+        {{#if map.email}}
+            <div class="map-info card">
+                <div class="card-body">
+                    <h1 style="margin: 0;font-size: 1.5rem;" id="map-title">{{{ map.title }}}</h1>
+                    {{#if map.description}}
+                        <p id="map-description" style="margin: 10px 0 0;">{{{ map.description }}}</p>
+                    {{/if}}
+                    <div style="display: flex; justify-content: flex-end;margin-top: 30px;">
+                        <small>Made with <a href="{{baseUrl}}">{{title}}</a></small>
+                    </div>
+                </div>
+            </div>
+        {{/if}}
+    </div>
+
+    <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
             var map = L.map('map', {
                 center: [0, 0],
@@ -174,10 +187,14 @@
                 maxZoom: 19
             }).addTo(map);
 
+            if (window.location.search.includes('landing')) {
+                document.querySelector('.map-info').style.display = 'none';
+            }
+
             // if screen is small, make create-map-form hidable clicking and sliding de header
             function toggleCardBody() {
                 if (window.innerWidth < 768) {
-                    document.querySelector('.card-header').addEventListener('click', () => {
+                    document.querySelector('.card-header')?.addEventListener('click', () => {
                         const cardBody = document.querySelector('.card-body');
                         if ( cardBody.style.display === 'none' ) {
                             cardBody.style.display = 'block';
@@ -195,24 +212,34 @@
                         document.querySelector('.btn').style.display = 'block';
                         document.querySelector('.card-title').style.display = 'none';
                     });
+
+                    // hide card body on map move
+                    map.on('moveend', () => {
+                        document.querySelector('.card-body').style.display = 'none';
+                        //document.querySelector('.btn').style.display = 'block';
+                        //document.querySelector('.card-title').style.display = 'none';
+                    });
+
+                    //document.querySelector('.map-info').style.display = 'none';
                 } else {
-                    document.querySelector('.card-body').style.display = 'block';
-                    document.querySelector('#create-map-form .card-title').style.display = 'block';
-                    document.querySelector('#create-map-form .btn').style.display = 'none';
+                    //document.querySelector('.card-body').style.display = 'block';
+                    //document.querySelector('#create-map-form .card-title').style.display = 'block';
+                    //document.querySelector('#create-map-form .btn').style.display = 'none';
+
+                    //document.querySelector('.map-info').style.display = 'block';
                 }
             }
 
             toggleCardBody();
             window.addEventListener('resize', toggleCardBody);
 
-            // TODO: delete id
-            const id = window.location.pathname.split('/').pop();
+            const userMap = {{{ mapObject }}};
 
             function connectSocket() {
                 socket = io();
 
                 socket.on('marker:created', function({ marker }) {
-                    if (marker.map_id !== id) return;
+                    if (marker.map_id !== userMap.id) return;
 
                     L.marker([parseFloat(marker.latitude), parseFloat(marker.longitude)], {
                         id: marker._id.toString()
@@ -229,7 +256,7 @@
                 });
 
                 socket.on('marker:deleted', function({ marker }) {
-                    if (marker.map_id !== id) return;
+                    if (marker.map_id !== userMap.id) return;
 
                     map.eachLayer(function(layer) {
                         if (layer instanceof L.Marker && layer.options.id === marker._id.toString()) {
@@ -239,7 +266,7 @@
                 });
 
                 socket.on('map:updated', function({ map: currentMap }) {
-                    if (currentMap.id !== id) return;
+                    if (currentMap.id !== userMap.id) return;
 
                     map.setView([currentMap.latitude, currentMap.longitude], currentMap.zoom);
                     document.getElementById('map-title').textContent = currentMap.title;
@@ -255,27 +282,20 @@
             let markers = [];
             let socket;
 
-            const userMap = JSON.parse('{{{ map }}}');
-            document.getElementById('configForm').setAttribute('action', `/${id}`);
+
+            //document.getElementById('configForm').setAttribute('action', `/${userMap.id}`);
 
             map.setView([userMap.latitude, userMap.longitude], userMap.zoom);
 
             if (!userMap.new) {
-                document.querySelector('.center-marker').style.display = 'none';
-                document.getElementById('create-map-form').style.display = 'none';
-
-                document.querySelector('.map-info').style.display = 'block';
-                document.getElementById('map-title').textContent = userMap.title;
-                document.getElementById('map-description').textContent = userMap.description;
-                document.getElementById('map-description').style.display = userMap.description ? 'block' : 'none';
                 if (userMap.title !== 'Demo') {
                     document.getElementById('created-by').style.display = 'flex';
                 }
             }
 
             if (!userMap.email) {
-                const lat = document.querySelector('[name="latitude"]').value || '0';
-                const lng = document.querySelector('[name="longitude"]').value || '0';
+                //const lat = document.querySelector('[name="latitude"]').value || '0';
+                //const lng = document.querySelector('[name="longitude"]').value || '0';
             }
 
             userMap.markers.forEach(marker => {
@@ -290,7 +310,7 @@
 
             connectSocket();
 
-            document.querySelector('[name="zoom"]').addEventListener('change', (e) => {
+            document.querySelector('[name="zoom"]')?.addEventListener('change', (e) => {
                 const newZoom = parseInt(e.target.value);
                 if (!isNaN(newZoom)) {
                     const limitedZoom = Math.min(Math.max(newZoom, 0), 19);
@@ -309,13 +329,13 @@
                 document.querySelector('[name="longitude"]').value = center.lng.toFixed(6);
             });
 
-            document.querySelector('[name="title"]').addEventListener('input', (e) => {
+            document.querySelector('[name="title"]')?.addEventListener('input', (e) => {
                 document.querySelector('.map-info').style.display = e.target.value ? 'block' : 'none';
                 document.getElementById('map-title').textContent = e.target.value;
                 document.getElementById('map-description').textContent = document.querySelector('[name="description"]').value;
             });
 
-            document.querySelector('[name="description"]').addEventListener('input', (e) => {
+            document.querySelector('[name="description"]')?.addEventListener('input', (e) => {
                 document.querySelector('.map-info').style.display = e.target.value ? 'block' : 'none';
                 document.getElementById('map-description').style.display = e.target.value ? 'block' : 'none';
                 document.getElementById('map-description').textContent = e.target.value;
