@@ -52,12 +52,27 @@ class MapConfig extends LitElement {
     this.isOpen = false;
   }
 
+  _handleInput( evt ) {
+    let { name, value } = evt.target;
+    this[ name ] = value;
+  }
+
+  _handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (!this.isOpen) {
+      this.isOpen = true;
+      return;
+    }
+
+    this.shadowRoot.querySelector('#configForm').submit();
+  }
+
   render() {
     return html`
-    ${this.isOpen ? html`
 <div
   id="create-map-form"
-  class="card position-relative ${this.isMobile() ? 'rounded-top' : ''}"
+  class="card position-relative ${this.isMobile() ? 'rounded-top' : ''} ${this.isOpen ? 'd-block' : 'd-none'}"
   @mapUpdated=${this._handleMapUpdated}
 >
   <div class="card-header">
@@ -67,38 +82,39 @@ class MapConfig extends LitElement {
     <form id="configForm" method="post">
       <div class="mb-3">
         <label for="email">Email <span style="color: red;">*</span></label>
-        <input class="form-control" type="text" name="email" placeholder="Email">
+        <input @change=${this._handleInput} class="form-control" type="text" name="email" placeholder="Email">
         <div id="emailHelp" class="form-text">The API key will be sent to this email</div>
       </div>
       <div class="mb-3">
         <label for="title">Title <span style="color: red;">*</span></label>
-        <input class="form-control" type="text" name="title" placeholder="Title">
+        <input @change=${this._handleInput} class="form-control" type="text" name="title" placeholder="Title">
       </div>
       <div class="mb-3">
         <label for="description">Description</label>
-        <textarea class="form-control" name="description" placeholder="Description"></textarea>
+        <textarea @change=${this._handleInput} class="form-control" name="description" placeholder="Description"></textarea>
       </div>
       <div class="mb-3">
         <label for="latitude">Center <span style="color: red;">*</span></label>
-        <input class="form-control" type="text" name="latitude" placeholder="Latitude" .value=${this.latitude}>
-        <input class="form-control" type="text" name="longitude" placeholder="Longitude" .value=${this.longitude}>
+        <input @change=${this._handleInput} class="form-control" type="text" name="latitude" placeholder="Latitude" .value=${this.latitude}>
+        <input @change=${this._handleInput} class="form-control" type="text" name="longitude" placeholder="Longitude" .value=${this.longitude}>
       </div>
       <div id="zoom-container" class="mb-3">
         <label for="zoom">Zoom <span style="color: red;">*</span></label>
-        <input class="form-control" type="number" name="zoom" placeholder="Zoom" .value=${this.zoom}>
+        <input @change=${this._handleInput} class="form-control" type="number" name="zoom" placeholder="Zoom" .value=${this.zoom}>
       </div>
     </form>
   </div>
 </div>
-      ` : ''}
-      <div class="d-grid ${this.isMobile() ? 'fixed-bottom p-3' : ''}">
-        <button
-          @click=${() => this.isOpen = true}
-          id="configure-map-button"
-          type="submit"
-          class="btn btn-primary"
-          >Configure map</button>
-        </div>
+<div class="d-grid ${this.isMobile() ? 'fixed-bottom p-3' : ''}">
+  <button
+    @click=${this._handleSubmit}
+    id="configure-map-button"
+    type="submit"
+    class="btn btn-primary"
+    >
+    Configure map
+  </button>
+</div>
     `;
   }
 }
