@@ -117,8 +117,9 @@ curl -X POST ${process.env.APP_URL}/api/maps/${map.id}/markers \\
 -H "Authorization: Bearer ${map.api_key}" \\
 -H "Content-Type: application/json" \\
 -d "{
-  \\"latitude\\": ${map.latitude},
-  \\"longitude\\": ${map.longitude}
+  \\"latitude\\": ${body.latitude},
+  \\"longitude\\": ${body.longitude},
+  \\"title\\": \\"First marker\\"
 }"
 
 More information in ${process.env.APP_URL}
