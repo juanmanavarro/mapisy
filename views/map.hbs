@@ -14,7 +14,6 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <script defer data-domain="mapisy.com" src="https://analytics.juanma.app/js/script.js"></script>
-    <script type="module" src="/components/app-layout.js"></script>
     <script type="module" src="/components/map-config.js"></script>
     <style>
         body {
@@ -158,7 +157,6 @@
                 document.querySelector('.map-info').style.display = 'none';
             }
 
-
             const userMap = {{{ mapObject }}};
 
             function connectSocket() {
@@ -240,7 +238,9 @@
             });
 
             map.on('zoom', function() {
-                //document.querySelector('[name="zoom"]').value = parseInt(map.getZoom().toFixed(0));
+                const zoom = parseInt(map.getZoom().toFixed(0));
+                const event = new CustomEvent('mapUpdated', { detail: { zoom } });
+                window.dispatchEvent(event);
             });
 
             map.on('moveend', function() {

@@ -20,12 +20,16 @@ class MapConfig extends LitElement {
     longitude: {
       type: Number,
     },
+    zoom: {
+      type: Number,
+    },
   };
 
   constructor() {
     super();
     this.latitude = 0;
     this.longitude = 0;
+    this.zoom = 0;
   }
 
   connectedCallback() {
@@ -38,8 +42,9 @@ class MapConfig extends LitElement {
   }
 
   _handleMapUpdated = (event) => {
-    this.latitude = event.detail.lat;
-    this.longitude = event.detail.lng;
+    this.latitude = event.detail.lat ? event.detail.lat.toFixed(6) : this.latitude;
+    this.longitude = event.detail.lng ? event.detail.lng.toFixed(6) : this.longitude;
+    this.zoom = event.detail.zoom ? event.detail.zoom : this.zoom;
   }
 
   render() {
@@ -74,7 +79,7 @@ class MapConfig extends LitElement {
       </div>
       <div id="zoom-container" class="mb-3">
         <label for="zoom">Zoom <span style="color: red;">*</span></label>
-        <input class="form-control" type="number" name="zoom" placeholder="Zoom">
+        <input class="form-control" type="number" name="zoom" placeholder="Zoom" .value=${this.zoom}>
       </div>
       <div class="d-grid ${this.isMobile() ? 'fixed-bottom p-3' : ''}">
         <button
