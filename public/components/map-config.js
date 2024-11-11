@@ -26,6 +26,9 @@ class MapConfig extends LitElement {
     isOpen: {
       type: Boolean,
     },
+    isMobile: {
+      type: Boolean,
+    },
   };
 
   constructor() {
@@ -33,19 +36,26 @@ class MapConfig extends LitElement {
     this.latitude = 0;
     this.longitude = 0;
     this.zoom = 0;
-    this.isOpen = false;
+    this.isMobile = false;
+    this.isOpen = true;
   }
 
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('mapUpdated', this._handleMapUpdated);
+    window.addEventListener('resize', this._handleResize);
   }
 
-  isMobile() {
-    return window.innerWidth < 768;
+  _handleResize = () => {
+    this.isMobile = window.innerWidth < 768;
+    this.isOpen = !this.isMobile;
   }
 
   _handleMapUpdated = (event) => {
+    if ( !this.isMobile ) {
+      return;
+    }
+
     this.latitude = event.detail.lat ? event.detail.lat.toFixed(6) : this.latitude;
     this.longitude = event.detail.lng ? event.detail.lng.toFixed(6) : this.longitude;
     this.zoom = event.detail.zoom ? event.detail.zoom : this.zoom;
@@ -72,13 +82,13 @@ class MapConfig extends LitElement {
     return html`
 <div
   id="create-map-form"
-  class="card position-relative ${this.isMobile() ? 'rounded-top' : ''} ${this.isOpen ? 'd-block' : 'd-none'}"
+  class="card position-relative ${this.isOpen ? 'd-block' : 'd-none'}"
   @mapUpdated=${this._handleMapUpdated}
 >
   <div class="card-header">
     <h6 class="card-title m-0">Configure map</h6>
   </div>
-  <div class="card-body ${this.isMobile() ? 'pb-5' : ''}" style="max-height: 65vh;overflow-y: auto;">
+  <div class="card-body ${this.isMobile ? 'pb-5' : ''}" style="max-height: 65vh;overflow-y: auto;">
     <form id="configForm" method="post">
       <div class="mb-3">
         <label for="email">Email <span style="color: red;">*</span></label>
@@ -105,7 +115,7 @@ class MapConfig extends LitElement {
     </form>
   </div>
 </div>
-<div class="d-grid ${this.isMobile() ? 'fixed-bottom p-3' : ''}">
+<div class="d-grid ${this.isMobile ? 'fixed-bottom p-3' : ''}">
   <button
     @click=${this._handleSubmit}
     id="configure-map-button"
