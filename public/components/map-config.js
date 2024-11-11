@@ -52,14 +52,13 @@ class MapConfig extends LitElement {
   }
 
   _handleMapUpdated = (event) => {
-    if ( !this.isMobile ) {
-      return;
+    if ( this.isMobile ) {
+      this.isOpen = false;
     }
 
     this.latitude = event.detail.lat ? event.detail.lat.toFixed(6) : this.latitude;
     this.longitude = event.detail.lng ? event.detail.lng.toFixed(6) : this.longitude;
     this.zoom = event.detail.zoom ? event.detail.zoom : this.zoom;
-    this.isOpen = false;
   }
 
   _handleInput( evt ) {
