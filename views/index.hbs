@@ -42,7 +42,7 @@
             <div class="feature-card">
                 <div class="feature-icon">🌍</div>
                 <h3>1. Create Your Map</h3>
-                <p>Simply add the path to our root URL, and you're ready to go. No complex setups, just instant maps. For example: <a href="{{baseUrl}}/{{mapId}}">{{baseUrl}}/{{mapId}}</a></p>
+                <p>Simply add the path to our root URL, and you're ready to go. No complex setups, just instant maps. For example: <span style="font-weight: bold;cursor: pointer;text-decoration: underline" onclick="navigator.clipboard.writeText('{{baseUrl}}/{{mapId}}');alert('Copied to clipboard!');">{{baseUrl}}/{{mapId}}</span></p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">⚙️</div>
@@ -107,7 +107,7 @@
 
     <footer class="footer">
         <div class="footer-bottom">
-            <p>&copy; 2024 {{ title }}. All rights reserved.</p>
+            <p>&copy; 2024 <a href="https://juanmanavar.ro" style="color: white !important;" target="_blank">Juanma Navarro</a>. All rights reserved.</p>
         </div>
     </footer>
 
