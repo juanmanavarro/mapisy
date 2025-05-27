@@ -1,56 +1,75 @@
-import { Body, Controller, Get, Param, Post, Put, Res, Headers } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { MapDocument } from 'src/schemas/map.schema';
-import { Map } from 'src/schemas/map.schema';
+import { Body, Controller, Get, Param, Post, Put, Res, Headers, HttpStatus, HttpException, UseGuards } from '@nestjs/common'; // Added HttpStatus, HttpException
 import { Response } from 'express';
 import { AppGateway } from 'src/app.gateway';
+import { MapService } from './map.service'; // Import MapService
+import { MapDocument, Map } from 'src/schemas/map.schema'; // Import Map
+
+// Define a simple DTO for map creation (can be expanded or moved to a separate file)
+class CreateMapDto {
+  id: string;
+  email?: string;
+  title?: string;
+  description?: string;
+  latitude?: number;
+  longitude?: number;
+  zoom?: number;
+}
+
+class UpdateMapDto {
+  latitude?: number;
+  longitude?: number;
+  zoom?: number;
+  title?: string;
+  description?: string;
+}
 
 @Controller('api/maps')
 export class MapController {
   constructor(
-    @InjectModel(Map.name) private mapModel: Model<MapDocument>,
+    private readonly mapService: MapService, // Inject MapService
     private appGateway: AppGateway,
   ) {}
 
-  // Comando curl para actualizar el mapa:
-  // curl -X PUT {{baseUrl}}/api/maps/{id} \
-  // -H "Content-Type: application/json" \
-  // -d '{
-  //     "latitude": <nueva_latitud>,
-  //     "longitude": <nueva_longitud>,
-  //     "zoom": <nuevo_zoom>,
-  //     "title": "<nuevo_titulo>",
-  //     "description": "<nueva_descripcion>"
-  // }'
-  @Put(':id')
-  async config(@Param('id') id: string, @Body() body: any, @Headers('authorization') auth: string, @Res() res: Response) {
-    const map = await this.mapModel.findOne({ id });
-
-    if (!map || map.id === 'demo') {
-      return res.status(404).json({ message: 'Map not found' });
-    }
-
-    if (!auth || !auth.startsWith('Bearer ') || auth.split(' ')[1] !== map.api_key) {
-      return res.status(401).json({ message: 'Invalid API key'});
-    }
-
-    const fieldsToUpdate = ['latitude', 'longitude', 'zoom', 'title', 'description'];
-
-    if (!fieldsToUpdate.some(field => body[field] !== undefined)) {
-      return res.status(400).json({ message: 'Any of these fields are required: latitude, longitude, zoom, title, description' });
-    }
-
-    fieldsToUpdate.forEach(field => {
-      if (body[field] !== undefined) {
-        map[field] = body[field];
+  @Post()
+  async create(@Body() createMapDto: CreateMapDto, @Res() res: Response) {
+    try {
+      // Ensure ID is provided, as it's crucial for our setup
+      if (!createMapDto.id) {
+         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Map ID must be provided.' });
       }
-    });
+      const map = await this.mapService.createMap(createMapDto);
+      return res.status(HttpStatus.CREATED).json(map);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        return res.status(error.getStatus()).json({ message: error.message });
+      }
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error creating map', error: error.message });
+    }
+  }
 
-    await map.save();
+  @Put(':id')
+  async config(@Param('id') id: string, @Body() updateMapDto: UpdateMapDto, @Headers('authorization') auth: string, @Res() res: Response) {
+    try {
+      if (!auth || !auth.startsWith('Bearer ')) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Authorization header missing or malformed' });
+      }
+      const apiKey = auth.split(' ')[1];
 
-    this.appGateway.send('map:updated', { map });
-
-    return res.status(200).json({ message: 'Map updated' });
+      const fieldsToUpdate = ['latitude', 'longitude', 'zoom', 'title', 'description'];
+      if (!fieldsToUpdate.some(field => updateMapDto[field] !== undefined)) {
+        return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Any of these fields are required: latitude, longitude, zoom, title, description' });
+      }
+      
+      const updatedMap = await this.mapService.updateMap(id, updateMapDto, apiKey);
+      this.appGateway.send('map:updated', { map: updatedMap }); // Consider moving this to the service or using an event emitter
+      return res.status(HttpStatus.OK).json({ message: 'Map updated', map: updatedMap });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        return res.status(error.getStatus()).json({ message: error.message });
+      }
+      // Log non-HttpException errors for debugging
+      console.error('Error updating map:', error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error updating map', error: error.message });
+    }
   }
 }
