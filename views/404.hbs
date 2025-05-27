@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found</title>
+    <title>{{#if errorCode}}{{errorCode}}{{else}}404{{/if}} - Error</title>
     <style>
         * {
             margin: 0;
@@ -76,8 +76,8 @@
 </head>
 <body>
     <div class="container">
-        <div class="error-code">404</div>
-        <div class="message">Oops! The page you're looking for has vanished into the digital void.</div>
+        <div class="error-code">{{#if errorCode}}{{errorCode}}{{else}}404{{/if}}</div>
+        <div class="message">{{#if message}}{{message}}{{else}}Oops! The page you're looking for has vanished into the digital void.{{/if}}</div>
         <a href="/" class="home-button">Go Home</a>
     </div>
 </body>

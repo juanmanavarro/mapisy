@@ -64,6 +64,15 @@ export class AppController {
       return res.status(400).json({ message: 'Error 400: La petición debe hacerse desde un navegador' });
     }
 
+    // Validar que el ID solo contenga letras, números, guiones medios y guiones bajos
+    const validIdPattern = /^[a-zA-Z0-9_-]+$/;
+    if (!validIdPattern.test(id)) {
+      return res.status(400).render('404', {
+        errorCode: '400',
+        message: 'Map ID can only contain letters, numbers, hyphens (-) and underscores (_)'
+      });
+    }
+
     let map = await this.mapModel.findOne({ id });
     if (!map) {
       map = await this.mapModel.create({ id, reqHeaders: req.headers });
@@ -84,6 +93,12 @@ export class AppController {
 
   @Post(':id')
   async configMap(@Param('id') id: string, @Body() body: any, @Res() res: Response) {
+    // Validar que el ID solo contenga letras, números, guiones medios y guiones bajos
+    const validIdPattern = /^[a-zA-Z0-9_-]+$/;
+    if (!validIdPattern.test(id)) {
+      return res.redirect(`/?message=Map ID can only contain letters, numbers, hyphens (-) and underscores (_)`);
+    }
+
     if (!body.latitude || !body.longitude || !body.zoom || !body.email || !body.title) {
       return res.redirect(`/${id}?message=Email, Title, Latitude, Longitude and Zoom are required`);
     }
