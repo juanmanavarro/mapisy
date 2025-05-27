@@ -44,6 +44,9 @@ export class Map {
 
   markers: Marker[];
   new: boolean;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const MapSchema = SchemaFactory.createForClass(Map);
