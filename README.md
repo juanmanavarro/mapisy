@@ -1,73 +1,136 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Mapisy
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Create maps easily, mark spots instantly. Mapisy allows you to effortlessly create and share maps with customized markers. Perfect for tracking locations, sharing points of interest, and visualizing data with minimal setup.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **Easy Map Creation**: Simply visit a new path to create a map. If the path is available, your map is instantly ready.
+- **Customization**: Set the center, zoom level, title, and description of your map.
+- **Add Markers**: Use a simple API to add markers to your map in seconds.
+- **Share and Explore**: Share your map with a simple link.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Getting Started
 
-## Installation
+1.  **Create Your Map**: Navigate to `/{your_map_id}`. If `your_map_id` is not taken, a new map will be created for you.
+2.  **Customize**: Use the API to set the initial view (latitude, longitude, zoom) and add a title and description.
+3.  **Add Markers**: Populate your map with markers using the API.
+4.  **Share**: Share the link `/{your_map_id}` with anyone.
 
-```bash
-$ npm install
+## API Documentation
+
+Your API key is generated when you first create a map. You can find it by inspecting the `map.api_key` property in your browser's developer console when viewing your map, or by checking the network response when the map loads.
+
+Replace `{map_id}` with the ID of your map and `{api_key}` with your generated API key in the examples below.
+
+### Create a Map
+
+To create a map, simply visit a new, unique path in your browser:
+
+`GET /{map_id}`
+
+If the `map_id` is available, a new map will be created. You will also receive an `api_key` for this map.
+
+### Update Map Configuration
+
+Update the settings of an existing map.
+
+`PUT /api/maps/{map_id}`
+
+**Authorization**: `Bearer {api_key}`
+**Content-Type**: `application/json`
+
+**Body**:
+
+```json
+{
+    "latitude": {latitude},
+    "longitude": {longitude},
+    "zoom": {zoom},
+    "title": "{title}",
+    "description": "{description}"
+}
 ```
 
-## Running the app
+-   `latitude` (optional): New latitude for the map center.
+-   `longitude` (optional): New longitude for the map center.
+-   `zoom` (optional): New zoom level for the map.
+-   `title` (optional): New title for the map.
+-   `description` (optional): New description for the map.
+
+**Example Request**:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+curl -X PUT https://yourdomain.com/api/maps/my-special-map \
+    -H "Authorization: Bearer your_api_key_here" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "zoom": 12,
+        "title": "My Awesome Map Title",
+        "description": "A description of my awesome map."
+    }'
 ```
 
-## Test
+### Add a Marker to a Map
+
+Add a new marker to a specific map.
+
+`POST /api/maps/{map_id}/markers`
+
+**Authorization**: `Bearer {api_key}`
+**Content-Type**: `application/json`
+
+**Body**:
+
+```json
+{
+    "latitude": {latitude},
+    "longitude": {longitude},
+    "title": "{title}"
+}
+```
+
+-   `latitude` (required): Latitude of the marker.
+-   `longitude` (required): Longitude of the marker.
+-   `title` (optional): Title/label for the marker.
+
+**Example Request**:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+curl -X POST https://yourdomain.com/api/maps/my-special-map/markers \
+    -H "Authorization: Bearer your_api_key_here" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "latitude": 34.0522,
+        "longitude": -118.2437,
+        "title": "Los Angeles"
+    }'
 ```
 
-## Support
+### Delete a Marker from a Map
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Remove a specific marker from a map.
 
-## Stay in touch
+`DELETE /api/maps/{map_id}/markers/{marker_id}`
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**Authorization**: `Bearer {api_key}`
+**Content-Type**: `application/json`
 
-## License
+-   `marker_id` (required): The ID of the marker to delete.
 
-Nest is [MIT licensed](LICENSE).
+**Example Request**:
+
+```bash
+curl -X DELETE https://yourdomain.com/api/maps/my-special-map/markers/marker_id_to_delete \
+    -H "Authorization: Bearer your_api_key_here" \
+    -H "Content-Type: application/json"
+```
+
+## More Functionality
+
+More features and API endpoints are coming soon!
+
+---
+
+&copy; 2024 Juanma Navarro. All rights reserved.
