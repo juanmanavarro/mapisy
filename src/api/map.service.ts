@@ -19,7 +19,7 @@ export class MapService {
       // Consider BadRequestException if ID is syntactically invalid or missing when required by API contract
       throw new ConflictException('Map ID is required for creation.');
     }
-    const existingMap = await this.mapModel.findOne({ id: mapData.id }).exec();
+    const existingMap = await this.mapModel.findOne({ id: { $regex: new RegExp(`^${mapData.id}$`, 'i') } }).exec();
     if (existingMap) {
       throw new ConflictException(`Map with ID '${mapData.id}' already exists.`);
     }
