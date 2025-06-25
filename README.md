@@ -60,7 +60,7 @@ Update the settings of an existing map.
 **Example Request**:
 
 ```bash
-curl -X PUT https://yourdomain.com/api/maps/my-special-map \
+curl -X PUT https://mapisy.com/api/maps/my-special-map \
     -H "Authorization: Bearer your_api_key_here" \
     -H "Content-Type: application/json" \
     -d '{
@@ -98,7 +98,7 @@ Add a new marker to a specific map.
 **Example Request**:
 
 ```bash
-curl -X POST https://yourdomain.com/api/maps/my-special-map/markers \
+curl -X POST https://mapisy.com/api/maps/my-special-map/markers \
     -H "Authorization: Bearer your_api_key_here" \
     -H "Content-Type: application/json" \
     -d '{
@@ -122,7 +122,7 @@ Remove a specific marker from a map.
 **Example Request**:
 
 ```bash
-curl -X DELETE https://yourdomain.com/api/maps/my-special-map/markers/marker_id_to_delete \
+curl -X DELETE https://mapisy.com/api/maps/my-special-map/markers/marker_id_to_delete \
     -H "Authorization: Bearer your_api_key_here" \
     -H "Content-Type: application/json"
 ```
