@@ -23,9 +23,12 @@ import { MapService } from './api/map.service'; // Import MapService
       envFilePath: '.env',
     }),
     MongooseModule.forRootAsync({
-      useFactory: () => ({
-        uri: process.env.MONGO_URI,
-      }),
+      useFactory: () => {
+        console.log(process.env.MONGO_URI);
+        return {
+          uri: process.env.MONGO_URI,
+        };
+      },
     }),
     MongooseModule.forFeature([
       { name: Map.name, schema: MapSchema },
